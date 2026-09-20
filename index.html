@@ -1,0 +1,664 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+    <!-- Basic SEO --> 
+    <meta name="title" content="DriveWorld by Kurt"> 
+    <meta name="description" content="DriveWorld is 'mayat andfun multiplayer sandbox driving game where players can explore, drive, chat and enjoy an open driving experience with friends."> 
+    <!-- Open Graph / Facebook / Messenger / Discord --> 
+    <meta property="og:type" content="website"> 
+    <meta property="og:title" content="DriveWorld by Kurt (demo)"> 
+    <meta property="og:description" content="Explore, drive, chat and have fun with other players in DriveWorld, a multiplayer sandbox driving game."> 
+    <meta property="og:url" content="https://driveworld.onrender.com"> 
+    <meta property="og:site_name" content="DriveWorld"> 
+    <meta property="og:image" content="src/images/Driveworld.png"> 
+    <meta property="og:image:alt" content="DriveWorld Multiplayer Sandbox Driving Game"> 
+    <!-- Twitter / X --> 
+    <meta name="twitter:card" content="summary_large_image"> 
+    <meta name="twitter:title" content="DriveWorld Multiplayer Sandbox Driving Game"> 
+    <meta name="twitter:description" content="Explore, drive, chat, and have fun with other players in DriveWorld, a multiplayer sandbox driving game."> 
+    <meta name="twitter:image" content="src/images/Driveworld.png"> 
+    <!-- Mobile / Browser --> 
+    <meta name="theme-color" content="#0b0b0f"> 
+    <meta name="application-name" content="DriveWorld">
+    <meta property="og:image" content="src/images/Driveworld.png" />
+
+    <link rel="icon" type="image/png" href="src/images/favicon.png">
+    
+    <meta name="theme-color" content="#101721" />
+    <title>Driveworld by Kurt Allen</title>
+  </head>
+  <body>
+    <canvas id="game"></canvas>
+
+    <section id="loading">
+      <div class="intro-scene" aria-hidden="true">
+        <img class="bg_loading" src="src/images/MyCar.avif" alt="">
+        <div class="intro-scrim"></div>
+        <div class="intro-vignette"></div>
+      </div>
+
+      <div class="intro">
+        <header class="intro-brand">
+          <p class="intro-kicker">Multiplayer sandbox driving</p>
+          <h1 class="intro-title">DRIVEWORLD</h1>
+          <p class="intro-tagline">
+            Explore <span class="intro-tagline-dot" aria-hidden="true">&bull;</span>
+            Drive <span class="intro-tagline-dot" aria-hidden="true">&bull;</span>
+            Compete
+          </p>
+        </header>
+
+        <div class="intro-body">
+          <div class="intro-main">
+            <div class="name-entry">
+              <p class="name-entry-kicker">Enter your driver name</p>
+              <label for="player-name">Anya nagan mo:</label>
+              <input
+                id="player-name"
+                type="text"
+                maxlength="16"
+                autocomplete="off"
+                spellcheck="false"
+                placeholder="Your name"
+              />
+              <p id="name-error" role="alert"></p>
+            </div>
+
+            <button id="start" class="intro-drive-btn">
+              <span class="intro-drive-icon" aria-hidden="true">&#128663;</span>
+              <span class="intro-drive-label">Drive</span>
+            </button>
+
+            <p id="loading-status">Drive pa more...</p>
+          </div>
+
+          <aside class="intro-patch" aria-labelledby="intro-patch-title">
+            <div class="intro-patch-header">
+              <h2 id="intro-patch-title">What&rsquo;s new</h2>
+              <span class="intro-patch-version">v0.2</span>
+            </div>
+
+            <ul class="intro-patch-list">
+
+              <li class="intro-patch-item" style="--patch-color: #6fd0ff"> 
+                <span class="intro-patch-icon" aria-hidden="true">&#11088;</span> 
+                <div class="intro-patch-copy"> 
+                  <p class="intro-patch-name"> 
+                    Battery & Charging System 
+                    <span class="intro-patch-badge">New</span> 
+                  </p> 
+                  <p class="intro-patch-desc"> 
+                    Added battery system and Added Charging station at the safezone. 
+                  </p> 
+                </div> 
+              </li>
+
+              <li class="intro-patch-item" style="--patch-color: #6fd0ff"> 
+                <span class="intro-patch-icon" aria-hidden="true">&#11088;</span> 
+                <div class="intro-patch-copy"> 
+                  <p class="intro-patch-name"> 
+                    Level-up System 
+                    <span class="intro-patch-badge">New</span> 
+                  </p> 
+                  <p class="intro-patch-desc"> 
+                    Earn XP as you play, level up your character, and unlock new progression rewards as you reach higher levels. 
+                  </p> 
+                </div> 
+              </li>
+
+              <li class="intro-patch-item" style="--patch-color: #6fd0ff">
+                <span class="intro-patch-icon" aria-hidden="true">&#128299;</span>
+                <div class="intro-patch-copy">
+                  <p class="intro-patch-name">
+                    Gun turret <span class="intro-patch-badge">New</span>
+                  </p>
+                  <p class="intro-patch-desc">
+                    Equip your vehicle with a mounted gun turret and take on
+                    targets around the world.
+                  </p>
+                </div>
+              </li>
+
+              <li class="intro-patch-item" style="--patch-color: #ffb35c">
+                <span class="intro-patch-icon" aria-hidden="true">&#9889;</span>
+                <div class="intro-patch-copy">
+                  <p class="intro-patch-name">
+                    Turbo <span class="intro-patch-badge">New</span>
+                  </p>
+                  <p class="intro-patch-desc">
+                    Hit Shift on desktop or the mobile Turbo button for a burst
+                    of speed &mdash; it has a short cooldown, so use it wisely.
+                  </p>
+                </div>
+              </li>
+
+              <li class="intro-patch-item" style="--patch-color: #ff6c65">
+                <span class="intro-patch-icon" aria-hidden="true">&#127919;</span>
+                <div class="intro-patch-copy">
+                  <p class="intro-patch-name">
+                    New Enemy <span class="intro-patch-badge">New</span>
+                  </p>
+                  <p class="intro-patch-desc">
+                    New enemy the Mechanical Sentients & The Boss Arachnid Spider
+                  </p>
+                </div>
+              </li>
+
+              <li class="intro-patch-item" style="--patch-color: #c7dbf6">
+                <span class="intro-patch-icon" aria-hidden="true">&#128241;</span>
+                <div class="intro-patch-copy">
+                  <p class="intro-patch-name">
+                    Mobile UI
+                  </p>
+                  <p class="intro-patch-desc">
+                    Improved touch controls make DriveWorld easier to play on
+                    phones and tablets.
+                  </p>
+                </div>
+              </li>
+
+
+            </ul>
+            
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section id="hud" hidden>
+      <div class="dash" id="dash" data-mode="arcade">
+
+        <!-- Warning-light strip: only ever reflects state that already
+             exists elsewhere in the game (handbrake input, tire slip,
+             low player HP, turbo). Nothing here is invented. -->
+        <div class="dash-warnings" id="dash-warnings" aria-hidden="true">
+          <div class="dash-warn" id="warn-handbrake" data-warn-label="Handbrake">
+            <svg viewBox="0 0 24 24"><path d="M12 2 4 6v6c0 5.2 3.4 9 8 10 4.6-1 8-4.8 8-10V6l-8-4z"/></svg>
+          </div>
+          <div class="dash-warn" id="warn-traction" data-warn-label="Traction">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 5v3M12 16v3M5 12h3M16 12h3"/></svg>
+          </div>
+          <div class="dash-warn" id="warn-damage" data-warn-label="Vehicle condition">
+            <svg viewBox="0 0 24 24"><path d="M12 21s-7-4.2-9.3-8.4C1 9 2.6 5.6 6 5.3c2-.2 3.7 1 4.5 2.4C11.3 6.2 13 5 15 5.2c3.5.3 5 3.8 3.5 7.3C19.3 16.8 12 21 12 21z"/></svg>
+          </div>
+          <div class="dash-warn" id="warn-battery" data-warn-label="Battery">
+            <svg viewBox="0 0 24 24"><rect x="2" y="7" width="17" height="10" rx="1.5"/><rect x="20" y="10" width="2" height="4"/><path d="M13 8l-3.5 4.5H12L9.5 16 15 10.5h-2.5L13 8z" fill="currentColor" stroke="none"/></svg>
+          </div>
+        </div>
+
+        <div class="dash-cluster">
+
+          <div class="dash-gauge dash-gauge--speed">
+            <div class="dash-gauge-ring">
+              <svg class="dash-gauge-face" viewBox="0 0 120 120" aria-hidden="true">
+                <circle class="dash-gauge-track" cx="60" cy="60" r="52" />
+                <circle id="dash-rpm-fill" class="dash-gauge-fill" cx="60" cy="60" r="52" />
+                <g class="dash-gauge-ticks">
+                  <line x1="60" y1="10" x2="60" y2="18"/>
+                  <line x1="60" y1="10" x2="60" y2="18" transform="rotate(30 60 60)"/>
+                  <line x1="60" y1="10" x2="60" y2="18" transform="rotate(60 60 60)"/>
+                  <line x1="60" y1="10" x2="60" y2="18" transform="rotate(90 60 60)"/>
+                  <line x1="60" y1="10" x2="60" y2="18" transform="rotate(120 60 60)"/>
+                  <line x1="60" y1="10" x2="60" y2="18" transform="rotate(150 60 60)"/>
+                  <line x1="60" y1="10" x2="60" y2="18" transform="rotate(180 60 60)"/>
+                  <line x1="60" y1="10" x2="60" y2="18" transform="rotate(210 60 60)"/>
+                  <line x1="60" y1="10" x2="60" y2="18" transform="rotate(240 60 60)"/>
+                  <line x1="60" y1="10" x2="60" y2="18" transform="rotate(270 60 60)"/>
+                  <line x1="60" y1="10" x2="60" y2="18" transform="rotate(300 60 60)"/>
+                  <line x1="60" y1="10" x2="60" y2="18" transform="rotate(330 60 60)"/>
+                </g>
+              </svg>
+              <div class="dash-gauge-readout">
+                <strong id="speed" class="dash-speed-value">0</strong>
+                <button
+                  type="button"
+                  id="speed-unit"
+                  class="dash-speed-unit"
+                  title="Toggle mph / km/h"
+                >mph</button>
+              </div>
+            </div>
+            <span class="dash-gauge-title">SPEED</span>
+          </div>
+
+          <div class="dash-info-col">
+            <div class="dash-gear-badge">
+              <span id="gear-mode" class="dash-gear-mode">ARCADE</span>
+              <span id="gear" class="dash-gear-value">D</span>
+            </div>
+
+            <div id="engine-state" class="dash-engine-pill">RUNNING</div>
+            <div id="dash-rpm-value" class="dash-rpm-value">900 RPM</div>
+
+            <div id="dash-clutch-row" class="dash-clutch-row" hidden>
+              <span class="dash-clutch-label">Clutch</span>
+              <div class="dash-clutch-track">
+                <div id="dash-clutch-fill" class="dash-clutch-fill"></div>
+              </div>
+            </div>
+
+            <div class="dash-boost-row">
+              <span class="dash-boost-label">Boost</span>
+              <div class="dash-boost-track">
+                <div id="dash-boost-fill" class="dash-boost-fill"></div>
+              </div>
+            </div>
+
+            <div class="dash-battery-row">
+              <span class="dash-battery-label">Battery</span>
+              <div class="dash-battery-track">
+                <div id="dash-battery-fill" class="dash-battery-fill"></div>
+              </div>
+              <span id="dash-battery-percent" class="dash-battery-percent">100%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="dash-secondary">
+          <div id="delivery-status" class="dash-pill dash-pill-delivery">Drive to a glowing beacon to pick up a delivery</div>
+          <strong id="delivery-count" class="dash-pill dash-pill-score">Deliveries: 0 · Score: 0</strong>
+          <div id="turret-status" class="dash-pill dash-pill-turret">TURRET: OFFLINE</div>
+          <div id="turbo-status" class="dash-pill dash-pill-turbo">TURBO: READY</div>
+          <div id="battery-status" class="dash-pill dash-pill-battery">BATTERY: 100%</div>
+        </div>
+
+        <button id="start-engine" type="button" disabled>
+          Start engine
+        </button>
+      </div>
+
+      <!-- Keyboard control-panel: keycap-styled reference, only shown
+           while the active input source is the keyboard (see Game.js).
+           Manual mode isn't keyboard-capable (see InputManager.isManualCapable),
+           so this only ever needs the arcade layout. -->
+      <div id="keyboard-panel" class="kbd-panel" hidden aria-hidden="true">
+        <div class="kbd-panel-title">ARCADE CONTROLS</div>
+        <div class="kbd-row kbd-row--top">
+          <div class="kbd-group">
+            <span class="kbd-key" data-key="KeyW">W</span>
+            <span class="kbd-caption">Accelerate</span>
+          </div>
+        </div>
+        <div class="kbd-row kbd-row--mid">
+          <div class="kbd-group">
+            <span class="kbd-key" data-key="KeyA">A</span>
+            <span class="kbd-caption">Left</span>
+          </div>
+          <div class="kbd-group">
+            <span class="kbd-key" data-key="KeyS">S</span>
+            <span class="kbd-caption">Brake</span>
+          </div>
+          <div class="kbd-group">
+            <span class="kbd-key" data-key="KeyD">D</span>
+            <span class="kbd-caption">Right</span>
+          </div>
+        </div>
+        <div class="kbd-row kbd-row--wide">
+          <div class="kbd-group">
+            <span class="kbd-key kbd-key--wide" data-key="Space">SPACE</span>
+            <span class="kbd-caption">Handbrake</span>
+          </div>
+          <div class="kbd-group">
+            <span class="kbd-key kbd-key--wide" data-key="ShiftLeft" data-key-alt="ShiftRight">SHIFT</span>
+            <span class="kbd-caption">Turbo</span>
+          </div>
+        </div>
+        <div class="kbd-row kbd-row--mini">
+          <div class="kbd-mini"><span class="kbd-key kbd-key--mini">R</span>Reset</div>
+          <div class="kbd-mini"><span class="kbd-key kbd-key--mini">F</span>Turret</div>
+          <div class="kbd-mini"><span class="kbd-key kbd-key--mini">C</span>Camera</div>
+          <div class="kbd-mini"><span class="kbd-key kbd-key--mini">Esc</span>Menu</div>
+          <div class="kbd-mini"><span class="kbd-key kbd-key--mini">&crarr;</span>Chat</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="combat-hud" hidden>
+      <div class="combat-row">
+        <span class="combat-row-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M12 21s-7-4.2-9.3-8.4C1 9 2.6 5.6 6 5.3c2-.2 3.7 1 4.5 2.4C11.3 6.2 13 5 15 5.2c3.5.3 5 3.8 3.5 7.3C19.3 16.8 12 21 12 21z"/></svg>
+        </span>
+        <div class="combat-bar-track">
+          <div id="player-hp-fill" class="combat-bar-fill combat-bar-hp"></div>
+        </div>
+        <span id="player-hp-text" class="combat-row-value">100 / 100</span>
+      </div>
+      <div class="combat-row">
+        <span id="player-level-label" class="combat-row-label">LV 1</span>
+        <div class="combat-bar-track">
+          <div id="player-xp-fill" class="combat-bar-fill combat-bar-xp"></div>
+        </div>
+        <span id="player-xp-text" class="combat-row-value">0 / 100</span>
+      </div>
+      <div id="boss-hud" hidden>
+        <div id="boss-name">WAR MACHINE</div>
+      </div>
+    </section>
+
+    <button
+      id="hud-mode-toggle"
+      type="button"
+      hidden
+      aria-label="Cycle HUD visibility"
+    >
+      <span id="hud-mode-toggle-label">HUD: DEFAULT</span>
+    </button>
+
+    <div id="game-notice" hidden></div>
+
+    <div id="level-up-banner" hidden aria-hidden="true">
+      <div class="level-up-banner-star">✦</div>
+      <div class="level-up-banner-title">LEVEL UP</div>
+      <div id="level-up-banner-level">1</div>
+      <div id="level-up-banner-subtitle">VEHICLE UPGRADED</div>
+      <div id="level-up-banner-rewards"></div>
+    </div>
+
+    <div id="damage-flash" hidden></div>
+
+    <div id="death-screen" hidden>
+      <div class="death-screen-inner">
+        <div class="death-screen-icon" aria-hidden="true">☠</div>
+        <h2 class="death-screen-title">VEHICLE DESTROYED</h2>
+        <p class="death-screen-subtitle">You have been eliminated</p>
+        <p class="death-screen-countdown">
+          Respawning in <span id="death-screen-timer">5</span>&hellip;
+        </p>
+      </div>
+    </div>
+
+<details id="debug" hidden>
+
+  <div class="debug-actions">
+    <button id="copy-diagnostics" type="button">Copy diagnostics</button>
+    <button id="download-diagnostics" type="button">Download JSON</button>
+  </div>
+
+  <div class="debug-actions">
+  <button id="enable-v99" type="button" disabled>
+    Enable my V99 profile
+  </button>
+
+  <button id="use-keyboard" type="button" disabled>
+    Use keyboard
+  </button>
+
+  <button id="use-mobile" type="button" disabled>
+    Use touch controls
+  </button>
+
+  <button id="use-controller" type="button" disabled>
+    Use calibrated controller
+  </button>
+</div>
+
+<div class="debug-actions">
+  <button id="camera-toggle" type="button" disabled>
+    Change camera · C
+  </button>
+
+  <button id="fullscreen-toggle" type="button" disabled>
+    Enter fullscreen
+  </button>
+
+  <button id="enable-audio" type="button" disabled>
+    Enable audio
+  </button>
+</div>
+
+<label class="presentation-setting">
+  Master volume
+  <input
+    id="master-volume"
+    type="range"
+    min="0"
+    max="1"
+    step="0.01"
+    value="0.3"
+  />
+</label>
+
+<label class="presentation-setting">
+  <input id="camera-vibration" type="checkbox" checked />
+  Subtle driver head movement and vibration
+</label>
+
+<p id="presentation-status" role="status">
+  Driver View: C · Look around: right-click and drag
+</p>
+
+<details class="camera-options" id="camera-advanced-options">
+  <summary>Advanced camera settings</summary>
+
+  <label class="presentation-setting">
+    Driver FOV
+    <input
+      data-presentation="driverFov"
+      type="range" min="50" max="100" step="1"
+    />
+  </label>
+
+  <label class="presentation-setting">
+    Chase FOV
+    <input
+      data-presentation="chaseFov"
+      type="range" min="50" max="100" step="1"
+    />
+  </label>
+
+  <label class="presentation-setting">
+    Chase distance
+    <input
+      data-presentation="cameraDistance"
+      type="range" min="4" max="14" step="0.1"
+    />
+  </label>
+
+  <label class="presentation-setting">
+    Chase height
+    <input
+      data-presentation="cameraHeight"
+      type="range" min="1.5" max="6" step="0.1"
+    />
+  </label>
+
+  <label class="presentation-setting">
+    Look sensitivity
+    <input
+      data-presentation="lookSensitivity"
+      type="range" min="0.001" max="0.008" step="0.0001"
+    />
+  </label>
+</details>
+
+<details class="audio-options" id="audio-advanced-options">
+  <summary>Advanced audio settings</summary>
+
+  <label class="presentation-setting">
+    Engine volume
+    <input
+      data-presentation="engineVolume"
+      type="range" min="0" max="1" step="0.01"
+    />
+  </label>
+
+  <label class="presentation-setting">
+    Environment volume
+    <input
+      data-presentation="environmentVolume"
+      type="range" min="0" max="1" step="0.01"
+    />
+  </label>
+
+  <label class="presentation-setting">
+    Effects volume
+    <input
+      data-presentation="effectsVolume"
+      type="range" min="0" max="1" step="0.01"
+    />
+  </label>
+
+  <p id="settings-save-status" role="status"></p>
+</details>
+
+
+<p id="control-status" role="status">
+  Start the sandbox to select controls.
+</p>
+
+<div class="debug-actions">
+  <button id="select-arcade" type="button" disabled>
+    Arcade
+  </button>
+
+  <button id="select-manual" type="button" disabled>
+    Realistic Prototype
+  </button>
+
+</div>
+
+<p id="driving-status" role="status">
+  Stop the vehicle before changing driving mode.
+</p>
+
+  <p id="diagnostics-status" role="status" aria-live="polite"></p>
+
+  <pre id="input-debug">Start the game to inspect inputs.</pre>
+</details>
+
+<button id="open-menu" type="button" hidden>
+  Settings · ESC
+</button>
+
+<section
+  id="settings-menu"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="settings-title"
+  hidden
+>
+  <div class="settings-window">
+    <header class="settings-header">
+      <div>
+        <h2 id="settings-title">DRIVEWORLD</h2>
+        <p>Local session paused</p>
+      </div>
+
+      <button id="close-menu" type="button">Resume · ESC</button>
+    </header>
+
+    <nav class="settings-tabs" role="tablist" aria-label="Settings categories">
+      <button
+        type="button"
+        role="tab"
+        id="settings-tab-controls"
+        aria-controls="settings-page-controls"
+        data-settings-tab="controls"
+      >Controls</button>
+      <button
+        type="button"
+        role="tab"
+        id="settings-tab-driving"
+        aria-controls="settings-page-driving"
+        data-settings-tab="driving"
+      >Driving</button>
+      <button
+        type="button"
+        role="tab"
+        id="settings-tab-display"
+        aria-controls="settings-page-display"
+        data-settings-tab="display"
+      >Display</button>
+      <button
+        type="button"
+        role="tab"
+        id="settings-tab-audio"
+        aria-controls="settings-page-audio"
+        data-settings-tab="audio"
+      >Audio</button>
+    </nav>
+
+    <section
+      id="settings-page-controls"
+      role="tabpanel"
+      aria-labelledby="settings-tab-controls"
+      data-settings-page="controls"
+    >
+      <h3>Input device</h3>
+      <div id="menu-controls"></div>
+      <p class="settings-help">
+        The saved V99 profile uses your verified DInput layout.
+        Center steering, release pedals, and select neutral after resuming.
+      </p>
+    </section>
+
+    <section
+      id="settings-page-driving"
+      role="tabpanel"
+      aria-labelledby="settings-tab-driving"
+      data-settings-page="driving"
+      hidden
+    >
+      <h3>Driving mode</h3>
+      <div id="menu-driving"></div>
+      <p class="settings-help">
+        Stop before changing driving mode. In Realistic Prototype,
+        use your physical clutch and H-pattern shifter.
+      </p>
+    </section>
+
+    <section
+      id="settings-page-display"
+      role="tabpanel"
+      aria-labelledby="settings-tab-display"
+      data-settings-page="display"
+      hidden
+    >
+      <h3>Camera</h3>
+      <div id="menu-display"></div>
+      <p class="settings-help">
+        C switches cameras. Right-click and drag in Driver View to look around.
+      </p>
+      <div id="menu-display-advanced"></div>
+
+      <h3>HUD</h3>
+      <fieldset id="menu-hud" class="hud-mode-options">
+        <legend class="visually-hidden">HUD visibility</legend>
+        <label class="hud-mode-option">
+          <input type="radio" name="hud-mode" value="default" />
+          Default
+        </label>
+        <label class="hud-mode-option">
+          <input type="radio" name="hud-mode" value="simplified" />
+          Simplified
+        </label>
+        <label class="hud-mode-option">
+          <input type="radio" name="hud-mode" value="hidden" />
+          Hide all
+        </label>
+      </fieldset>
+      <p class="settings-help">
+        Also reachable in-game with the HUD button, top right.
+      </p>
+    </section>
+
+    <section
+      id="settings-page-audio"
+      role="tabpanel"
+      aria-labelledby="settings-tab-audio"
+      data-settings-page="audio"
+      hidden
+    >
+      <h3>Audio</h3>
+      <div id="menu-audio"></div>
+      <div id="menu-audio-advanced"></div>
+    </section>
+  </div>
+</section>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
