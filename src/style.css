@@ -1,0 +1,3265 @@
+:root {
+  color-scheme: dark;
+  font-family: Inter, system-ui, sans-serif;
+  color: #eef4ff;
+  background: #101721;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  overflow: hidden;
+}
+
+canvas {
+  display: block;
+  width: 100vw;
+  height: 100vh;
+}
+
+#loading {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: #0a1019;
+  z-index: 10;
+}
+
+#loading[hidden], #hud[hidden] { display: none; }
+
+h1 {
+  letter-spacing: 0.2em;
+  font-size: clamp(2rem, 6vw, 4rem);
+  margin-bottom: 0;
+}
+
+/* ==========================================================================
+   Intro / title screen — cinematic backdrop, brand block, driver-name
+   card and patch-notes panel. Everything below lives inside #loading,
+   which main.js only ever toggles via [hidden]; nothing here changes
+   how the section is shown or dismissed.
+   ========================================================================== */
+
+.intro-scene {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.bg_loading {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 40%;
+  filter: saturate(1.05) brightness(0.9);
+  animation: intro-pan 22s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+.intro-scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, #0a1019e6 0%, #0a101966 32%, #0a101973 62%, #0a1019f2 100%),
+    linear-gradient(90deg, #0a1019e0 0%, #0a101940 38%, #0a101940 62%, #0a1019e0 100%);
+}
+
+.intro-vignette {
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 min(18vw, 220px) min(6vw, 90px) #05070bcc;
+  background: radial-gradient(circle at 50% 38%, transparent 45%, #05070b66 100%);
+}
+
+@keyframes intro-pan {
+  from { transform: scale(1.06) translate3d(-1%, 0, 0); }
+  to   { transform: scale(1.12) translate3d(1%, -1%, 0); }
+}
+
+.intro {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(1.4rem, 3vh, 2.2rem);
+  width: min(1040px, calc(100vw - 2.4rem));
+  max-height: calc(100vh - 2.4rem);
+  max-height: calc(100dvh - 2.4rem);
+  padding: clamp(1.2rem, 3vh, 1.8rem) 0.4rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-top: calc(env(safe-area-inset-top, 0px) + clamp(1.2rem, 3vh, 1.8rem));
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + clamp(1.2rem, 3vh, 1.8rem));
+}
+
+.intro-brand {
+  text-align: center;
+  animation: intro-rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.intro-kicker {
+  margin: 0 0 0.3rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: #9fb4c6;
+}
+
+.intro-title {
+  margin: 0;
+  font-size: clamp(2.6rem, 9vw, 5rem);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  background: linear-gradient(180deg, #ffffff 0%, #cfe0f2 60%, #9fc9e8 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 60px #7de2bf4d, 0 2px 30px #00000080;
+}
+
+.intro-tagline {
+  margin: 0.5rem 0 0;
+  font-size: clamp(0.8rem, 1.6vw, 1rem);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #cfe8ff;
+}
+
+.intro-tagline-dot {
+  display: inline-block;
+  margin: 0 0.35em;
+  color: #7de2bf;
+}
+
+.intro-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 340px);
+  grid-template-areas: "main patch";
+  gap: clamp(1rem, 2.4vw, 1.6rem);
+  width: 100%;
+  align-items: start;
+}
+
+.intro-main {
+  grid-area: main;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+  padding: clamp(1.4rem, 3vw, 2rem) clamp(1.2rem, 3vw, 1.8rem);
+  border: 1px solid #ffffff1f;
+  border-radius: 1rem;
+  background: #0c1623bf;
+  backdrop-filter: blur(10px);
+  animation: intro-rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.12s both;
+}
+
+#loading-status {
+  margin: 0;
+  min-height: 1.2em;
+  font-size: 0.8rem;
+  color: #9fb4c6;
+  text-align: center;
+}
+
+button {
+  margin-top: 1rem;
+  padding: 0.9rem 1.5rem;
+  border: 0;
+  border-radius: 0.7rem;
+  background: #7de2bf;
+  color: #0a241b;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.12s ease, transform 0.08s ease;
+}
+
+button:hover { opacity: 0.92; }
+button:active { transform: scale(0.97); }
+
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+#debug {
+  position: fixed;
+  padding: clamp(0.7rem, 2vw, 1rem);
+  border: 1px solid #ffffff24;
+  border-radius: 0.8rem;
+  background: #0c1623d9;
+  backdrop-filter: blur(8px);
+  max-width: calc(100vw - 2rem);
+}
+
+/* ==========================================================================
+   #hud — the driving HUD's positioning shell. Desktop docks the whole
+   cluster bottom-center, matching a real dash; the keyboard control panel
+   (also inside #hud) sits to its right. Mobile repositions this whole
+   shell above the touch controls (see the mobile-controls-active rules
+   further down) instead of scaling a corner box, which is what used to
+   make it look like a generic HTML panel.
+   ========================================================================== */
+
+#hud {
+  position: fixed;
+  left: calc(env(safe-area-inset-left, 0px) + 1rem);
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 1rem);
+  z-index: 4;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: flex-start;
+  gap: 0.6rem;
+  max-width: min(300px, calc(100vw - 1.6rem));
+  pointer-events: none;
+}
+
+#hud[hidden] { display: none; }
+
+#hud > * { pointer-events: auto; }
+
+/* ==========================================================================
+   Vehicle dashboard / instrument cluster. Reads the same speed, gear,
+   RPM, and clutch values the HUD always has — see Game.js's frame() —
+   rendered as an actual backlit instrument cluster: a ringed speedometer
+   (primary), a status column with gear/engine/RPM/boost, a warning-light
+   strip above, and a thin status-pill row below for turret/turbo/delivery.
+   ========================================================================== */
+
+.dash {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(0.35rem, 1.2vh, 0.55rem);
+  padding: clamp(0.55rem, 1.4vw, 0.85rem) clamp(0.7rem, 1.8vw, 1.05rem) clamp(0.5rem, 1.3vw, 0.7rem);
+  border-radius: 1.1rem;
+  border: 1px solid #ffffff22;
+  background:
+    radial-gradient(120% 160% at 50% 0%, #1a2a3ce8 0%, #0d1620e8 60%, #090f17e8 100%);
+  box-shadow:
+    0 18px 46px -10px #000000a0,
+    inset 0 1px 0 #ffffff14,
+    inset 0 0 40px #00000055;
+  backdrop-filter: blur(10px);
+}
+
+/* Subtle brushed-metal/glass sheen across the whole cluster. */
+.dash::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(180deg, #ffffff12 0%, transparent 30%);
+  pointer-events: none;
+}
+
+.dash-warnings {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.1rem;
+}
+
+.dash-warn {
+  display: grid;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  color: #3a4756;
+  background: #ffffff08;
+  transition: color 0.15s ease, background 0.15s ease, filter 0.15s ease;
+}
+
+.dash-warn svg {
+  width: 62%;
+  height: 62%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.dash-warn#warn-damage svg { fill: currentColor; stroke: none; }
+
+.dash-warn.dash-warn--on {
+  color: #ffb35c;
+  background: #ffb35c1f;
+  filter: drop-shadow(0 0 6px #ffb35c99);
+}
+
+#warn-damage.dash-warn--on {
+  color: #ff6c65;
+  background: #ff6c651f;
+  filter: drop-shadow(0 0 6px #ff6c6599);
+}
+
+#warn-traction.dash-warn--on {
+  color: #ffe066;
+  background: #ffe0661f;
+  filter: drop-shadow(0 0 6px #ffe06699);
+}
+
+.dash-cluster {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.6rem, 2vw, 1.1rem);
+}
+
+/* --- Speedometer: the primary gauge -------------------------------------- */
+
+.dash-gauge {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.dash-gauge-ring {
+  position: relative;
+}
+
+.dash-gauge--speed .dash-gauge-ring {
+  width: clamp(92px, 15vw, 122px);
+  height: clamp(92px, 15vw, 122px);
+}
+
+.dash-gauge-face {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+  overflow: visible;
+}
+
+.dash-gauge-track {
+  fill: #0a121cb0;
+  stroke: #ffffff14;
+  stroke-width: 7;
+}
+
+.dash-gauge-fill {
+  fill: none;
+  stroke: #6fd0ff;
+  stroke-width: 7;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 6px #6fd0ffaa);
+  transition: stroke-dashoffset 0.12s ease-out, stroke 0.2s ease;
+}
+
+.dash-gauge-fill.dash-rpm-redline {
+  stroke: #ff6c65;
+  filter: drop-shadow(0 0 8px #ff6c65cc);
+}
+
+.dash-gauge-ticks line {
+  stroke: #ffffff3a;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.dash-gauge-readout {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.1rem;
+}
+
+.dash-speed-value {
+  font-size: clamp(1.4rem, 3.6vw, 1.9rem);
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: #f2f8ff;
+  text-shadow: 0 0 18px #6fd0ff55;
+}
+
+.dash-speed-unit {
+  margin: 0;
+  padding: 0.1rem 0.5rem;
+  border: 0;
+  border-radius: 999px;
+  background: #ffffff10;
+  color: #9fb4c6;
+  font: inherit;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.dash-speed-unit:hover { background: #ffffff1c; opacity: 1; }
+
+.dash-gauge-title {
+  margin-top: 0.15rem;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  color: #5d7188;
+}
+
+/* --- Info column: gear / engine / RPM / boost ---------------------------- */
+
+.dash-info-col {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.3rem;
+  min-width: 108px;
+}
+
+.dash-gear-badge {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.4rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 0.6rem;
+  background: #ffffff0a;
+  border: 1px solid #ffffff1a;
+}
+
+.dash-gear-mode {
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #7e93a8;
+}
+
+.dash-gear-value {
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-weight: 800;
+  line-height: 1;
+  color: #7de2bf;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 14px #7de2bf66;
+}
+
+.dash-engine-pill {
+  align-self: flex-start;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  background: #7de2bf22;
+  color: #7de2bf;
+  border: 1px solid #7de2bf40;
+  white-space: nowrap;
+}
+
+.dash-engine-pill--off {
+  background: #f5a3a322;
+  color: #f5a3a3;
+  border-color: #f5a3a340;
+}
+
+/* Arcade never stalls, so the engine pill is just clutter there.
+   (Specificity note: #hud #start-engine further down sets display:block
+   at 2-ID specificity, so these overrides need to match or exceed it.) */
+.dash[data-mode="arcade"] .dash-engine-pill { display: none; }
+#hud .dash[data-mode="arcade"] #start-engine { display: none; }
+
+.dash-rpm-value {
+  font-size: 0.7rem;
+  color: #c7dbf6;
+  font-variant-numeric: tabular-nums;
+}
+
+.dash-clutch-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  width: 100%;
+}
+
+.dash-clutch-row[hidden] { display: none; }
+
+.dash-clutch-label {
+  flex: 0 0 auto;
+  font-size: 0.6rem;
+  letter-spacing: 0.05em;
+  color: #9fb4c6;
+}
+
+.dash-clutch-track {
+  flex: 1 1 auto;
+  height: 0.4rem;
+  min-width: 40px;
+  border-radius: 999px;
+  background: #ffffff1a;
+  overflow: hidden;
+}
+
+.dash-clutch-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #f5d68a, #ffce7a);
+  transition: width 0.1s ease-out;
+}
+
+.dash-boost-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  width: 100%;
+}
+
+.dash-boost-label {
+  flex: 0 0 auto;
+  font-size: 0.6rem;
+  letter-spacing: 0.05em;
+  color: #9fb4c6;
+}
+
+.dash-boost-track {
+  flex: 1 1 auto;
+  height: 0.4rem;
+  min-width: 40px;
+  border-radius: 999px;
+  background: #ffffff1a;
+  overflow: hidden;
+}
+
+.dash-boost-fill {
+  height: 100%;
+  width: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #ffb35c, #ffe066);
+  transition: width 0.15s ease-out, background 0.15s ease;
+}
+
+.dash-boost-fill.dash-boost-fill--active {
+  background: linear-gradient(90deg, #ff9a3c, #ffce7a);
+  box-shadow: 0 0 10px #ffb35caa;
+}
+
+.dash-boost-fill.dash-boost-fill--cooldown {
+  background: linear-gradient(90deg, #5d7188, #8a94a3);
+}
+
+.dash-battery-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  width: 100%;
+}
+
+.dash-battery-label {
+  flex: 0 0 auto;
+  font-size: 0.6rem;
+  letter-spacing: 0.05em;
+  color: #9fb4c6;
+}
+
+.dash-battery-track {
+  flex: 1 1 auto;
+  height: 0.4rem;
+  min-width: 40px;
+  border-radius: 999px;
+  background: #ffffff1a;
+  overflow: hidden;
+  position: relative;
+}
+
+.dash-battery-fill {
+  height: 100%;
+  width: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #2fb8ff, #53d8ff);
+  transition: width 0.2s ease-out, background 0.2s ease;
+}
+
+.dash-battery-fill.dash-battery-fill--low {
+  background: linear-gradient(90deg, #e0a83c, #ffc24d);
+}
+
+.dash-battery-fill.dash-battery-fill--critical {
+  background: linear-gradient(90deg, #d6402f, #ff5a45);
+  animation: batteryCriticalPulse 0.9s ease-in-out infinite;
+}
+
+.dash-battery-fill.dash-battery-fill--empty {
+  background: linear-gradient(90deg, #4a2626, #6b3232);
+}
+
+.dash-battery-fill.dash-battery-fill--charging {
+  background: linear-gradient(90deg, #2fb8ff, #9be8ff);
+  box-shadow: 0 0 10px #53d8ffaa;
+  overflow: hidden;
+}
+
+/* Animated sweep highlight traveling across the fill while charging --
+   a single ::after gradient sweep driven by a CSS keyframe, no JS/canvas
+   needed for the dashboard's (DOM-based) battery readout. */
+.dash-battery-fill.dash-battery-fill--charging::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    transparent 0%,
+    #ffffffb0 45%,
+    transparent 65%
+  );
+  background-size: 60% 100%;
+  animation: batteryChargeSweep 1.4s linear infinite;
+}
+
+.dash-battery-percent {
+  flex: 0 0 auto;
+  font-size: 0.62rem;
+  color: #c7dbf6;
+  font-variant-numeric: tabular-nums;
+  min-width: 2.4ch;
+  text-align: right;
+}
+
+@keyframes batteryChargeSweep {
+  from { transform: translateX(-120%); }
+  to { transform: translateX(220%); }
+}
+
+@keyframes batteryCriticalPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+.dash-pill-battery {
+  color: #53d8ff;
+  font-size: 0.7rem;
+  letter-spacing: 0.03em;
+  transition: color 0.15s ease;
+}
+
+.dash-pill-battery--charging {
+  color: #9be8ff;
+  font-weight: 700;
+}
+
+.dash-pill-battery--low {
+  color: #ffc24d;
+}
+
+.dash-pill-battery--critical {
+  color: #ff5a45;
+  animation: batteryCriticalPulse 0.9s ease-in-out infinite;
+}
+
+.dash-pill-battery--empty {
+  color: #c97a7a;
+}
+
+.dash-secondary {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  width: 100%;
+}
+
+.dash-pill {
+  font-size: 0.72rem;
+  line-height: 1.3;
+  text-align: center;
+}
+
+.dash-pill-delivery { color: #ffce7a; }
+.dash-pill-score { color: #4be3a0; }
+
+.dash-pill-turret {
+  color: #6fd0ff;
+  font-size: 0.7rem;
+  letter-spacing: 0.03em;
+}
+
+.dash-pill-turbo {
+  color: #ffb35c;
+  font-size: 0.7rem;
+  letter-spacing: 0.03em;
+  transition: color 0.15s ease;
+}
+
+.dash-pill-turbo--active {
+  color: #ff9a3c;
+  font-weight: 700;
+}
+
+.dash-pill-turbo--cooldown {
+  color: #8a94a3;
+}
+
+#hud #start-engine {
+  margin-top: 0.1rem;
+  padding: 0.5rem 1.1rem;
+  font-size: 0.8rem;
+}
+
+/* ==========================================================================
+   Keyboard control panel — a keycap-styled reference for the active
+   driving keys, shown only while InputManager.mode === "keyboard" (see
+   Game.js). Manual mode isn't keyboard-capable, so only the arcade
+   layout ever needs to exist here.
+   ========================================================================== */
+
+.kbd-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.65rem 0.85rem;
+  border-radius: 1.1rem;
+  border: 1px solid #ffffff1e;
+  background: radial-gradient(120% 160% at 50% 0%, #16212ee8 0%, #0d1620e8 70%);
+  box-shadow: 0 18px 46px -10px #000000a0, inset 0 1px 0 #ffffff14;
+  backdrop-filter: blur(10px);
+  opacity: 1;
+  transform: scale(1);
+  transform-origin: bottom left;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.kbd-panel[hidden] { display: none; }
+
+/* Minimal-HUD behavior (see Game.js): once the car is actually moving,
+   the keycap reference fades down to a quiet corner reminder instead of
+   competing with the road — and returns to full strength the moment the
+   player slows back down or stops. */
+.kbd-panel.kbd-panel--minimal {
+  opacity: 0.35;
+  transform: scale(0.92);
+}
+
+.kbd-panel:hover,
+.kbd-panel.kbd-panel--minimal:hover {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.kbd-panel-title {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: #7e93a8;
+}
+
+.kbd-row {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.kbd-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.kbd-key {
+  display: grid;
+  place-items: center;
+  min-width: 1.85rem;
+  height: 1.85rem;
+  padding: 0 0.35rem;
+  border-radius: 0.5rem;
+  background: linear-gradient(180deg, #263a4f, #16212e);
+  border: 1px solid #ffffff26;
+  border-bottom: 3px solid #0a121c;
+  color: #eef4ff;
+  font-weight: 800;
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+  box-shadow: 0 3px 0 #05090ecc, inset 0 1px 0 #ffffff20;
+  transition: transform 0.06s ease, box-shadow 0.06s ease, border-bottom-width 0.06s ease, background 0.12s ease;
+}
+
+.kbd-key--wide {
+  min-width: 3.9rem;
+  font-size: 0.62rem;
+}
+
+.kbd-key--mini {
+  min-width: 1.5rem;
+  height: 1.5rem;
+  font-size: 0.66rem;
+  margin-right: 0.3rem;
+}
+
+.kbd-caption {
+  font-size: 0.6rem;
+  letter-spacing: 0.04em;
+  color: #9fb4c6;
+  white-space: nowrap;
+}
+
+.kbd-key.kbd-key--active {
+  transform: translateY(2px);
+  border-bottom-width: 1px;
+  box-shadow: 0 1px 0 #05090ecc, inset 0 0 0 2px #7de2bf, 0 0 16px #7de2bf88;
+  background: linear-gradient(180deg, #2f5c4c, #1a3327);
+  color: #baf5da;
+}
+
+.kbd-row--mini {
+  flex-wrap: wrap;
+  gap: 0.15rem 0.6rem;
+  margin-top: 0.15rem;
+  padding-top: 0.4rem;
+  border-top: 1px solid #ffffff14;
+}
+
+.kbd-mini {
+  display: flex;
+  align-items: center;
+  font-size: 0.62rem;
+  color: #9fb4c6;
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   Combat HUD: player HP + level/XP (top-right, clear of #hud, #open-menu,
+   #chat-panel, and every mobile touch control, which all live bottom/left).
+   ========================================================================== */
+
+#combat-hud {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0px) + 1rem);
+  right: calc(env(safe-area-inset-right, 0px) + 1rem);
+  z-index: 4;
+  padding: clamp(0.6rem, 2vw, 0.9rem) clamp(0.8rem, 2.4vw, 1.1rem);
+  border: 1px solid #ffffff24;
+  border-radius: 0.8rem;
+  background: linear-gradient(160deg, #16212ecc, #0c1623d9);
+  backdrop-filter: blur(8px);
+  width: min(220px, calc(100vw - 2rem));
+  font-size: 0.85rem;
+  box-shadow: 0 10px 28px -8px #00000090;
+}
+
+#combat-hud[hidden] { display: none; }
+
+.combat-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.4rem;
+}
+
+.combat-row:last-of-type { margin-bottom: 0; }
+
+.combat-row-label {
+  flex: 0 0 auto;
+  min-width: 2.4rem;
+  font-weight: 700;
+  color: #cfe8ff;
+}
+
+.combat-row-icon {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 1.1rem;
+  height: 1.1rem;
+  color: #ff6c65;
+}
+
+.combat-row-icon svg {
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+}
+
+.combat-row-value {
+  flex: 0 0 auto;
+  font-size: 0.75rem;
+  color: #9fb4c6;
+  white-space: nowrap;
+}
+
+.combat-bar-track {
+  flex: 1 1 auto;
+  height: 0.6rem;
+  border-radius: 999px;
+  background: #ffffff1a;
+  overflow: hidden;
+}
+
+.combat-bar-fill {
+  height: 100%;
+  width: 100%;
+  border-radius: 999px;
+  transition: width 0.15s ease-out;
+}
+
+.combat-bar-hp {
+  background: linear-gradient(90deg, #ff6c65, #7de2bf);
+}
+
+.combat-bar-xp {
+  background: linear-gradient(90deg, #4285f4, #87f4cc);
+}
+
+/* Brief celebration pulse on the level label and a flash sweep across the
+   XP bar, triggered by LevelUpEffect.trigger() (see Game.js) and removed
+   again once the animation finishes -- never left running. */
+.combat-row-label--pulse {
+  animation: levelLabelPulse 1.1s ease-out;
+}
+
+.combat-bar-xp--levelup {
+  animation: xpBarFlash 1.1s ease-out;
+}
+
+@keyframes levelLabelPulse {
+  0% { transform: scale(1); text-shadow: none; }
+  25% { transform: scale(1.35); color: #ffe28a; text-shadow: 0 0 10px #ffe28aaa; }
+  100% { transform: scale(1); text-shadow: none; }
+}
+
+@keyframes xpBarFlash {
+  0% { filter: brightness(1); }
+  30% { filter: brightness(1.9); }
+  100% { filter: brightness(1); }
+}
+
+#boss-hud {
+  margin-top: 0.5rem;
+  padding-top: 0.4rem;
+  border-top: 1px solid #ffffff24;
+  text-align: center;
+}
+
+#boss-hud[hidden] { display: none; }
+
+#boss-name {
+  color: #ff6c65;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  font-size: 0.85rem;
+}
+
+/* ==========================================================================
+   Transient notices: level-up, boss spawn/defeat, death/respawn.
+   ========================================================================== */
+
+#game-notice {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0px) + 1rem);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 8;
+  padding: 0.7rem 1.4rem;
+  border: 1px solid #ffffff33;
+  border-radius: 0.8rem;
+  background: #0c1623ea;
+  backdrop-filter: blur(8px);
+  color: #ffe28a;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-align: center;
+  max-width: min(420px, calc(100vw - 2rem));
+  pointer-events: none;
+}
+
+#game-notice[hidden] { display: none; }
+
+/* ==========================================================================
+   Level-up banner -- a distinct, more dramatic celebration than the plain
+   #game-notice pill, driven by LevelUpEffect (see gameplay/LevelUpEffect.js
+   and Game.js's onLevelUp). Sits outside #hud/#combat-hud, same as
+   #game-notice, so it still shows even in HUD-hidden mode (see the
+   body[data-hud-mode="hidden"] rule below). Styled as a high-tech vehicle
+   upgrade readout -- cyan/electric for a normal level-up, hotter
+   gold/orange for an evolution unlock.
+   ========================================================================== */
+
+#level-up-banner {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0px) + 1rem);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 0.9rem 2.2rem 1.1rem;
+  border-radius: 1rem;
+  border: 1px solid #53d8ff55;
+  background: radial-gradient(120% 160% at 50% 0%, #16212ee8 0%, #0c1623ea 75%);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 50px -8px #53d8ff66, 0 18px 40px -14px #000000a0;
+  pointer-events: none;
+  max-width: min(420px, calc(100vw - 2rem));
+  animation: levelUpBannerIn 2.6s ease-out both;
+  overflow: visible;
+}
+
+#level-up-banner[hidden] { display: none; }
+
+#level-up-banner::before {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: 1.2rem;
+  border: 1px solid #53d8ff88;
+  opacity: 0;
+  animation: levelUpRingExpand 1s ease-out;
+  pointer-events: none;
+}
+
+.level-up-banner-star {
+  font-size: 1.1rem;
+  color: #9be8ff;
+  text-shadow: 0 0 14px #53d8ffcc;
+  margin-bottom: 0.1rem;
+}
+
+.level-up-banner-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  color: #cfe8ff;
+}
+
+#level-up-banner-level {
+  font-size: clamp(1.8rem, 6vw, 2.6rem);
+  font-weight: 800;
+  line-height: 1.05;
+  color: #fff;
+  text-shadow: 0 0 18px #53d8ffaa;
+  font-variant-numeric: tabular-nums;
+}
+
+#level-up-banner-subtitle {
+  margin-top: 0.15rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #9be8ff;
+}
+
+#level-up-banner-rewards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.35rem 0.5rem;
+  margin-top: 0.55rem;
+}
+
+.level-up-reward {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #baf5da;
+  background: #3ddc8422;
+  border: 1px solid #3ddc8455;
+  border-radius: 999px;
+  padding: 0.15rem 0.6rem;
+}
+
+/* Evolution unlock: hotter palette + a slightly larger glow -- the same
+   structure, a more dramatic skin. */
+#level-up-banner.level-up-banner--evolution {
+  border-color: #ffb35c66;
+  box-shadow: 0 0 70px -6px #ffb35c77, 0 18px 40px -14px #000000a0;
+  /* Evolution stays on screen a bit longer (matches LevelUpEffect's
+     longer EVOLUTION_DURATION timer) before fading, instead of reusing
+     the normal level-up's shorter fade timing. */
+  animation: levelUpBannerInEvolution 3.4s ease-out both;
+}
+
+#level-up-banner.level-up-banner--evolution::before {
+  border-color: #ffce7a99;
+}
+
+#level-up-banner.level-up-banner--evolution #level-up-banner-level {
+  color: #ffe9c2;
+  text-shadow: 0 0 22px #ffb35cbb;
+}
+
+#level-up-banner.level-up-banner--evolution #level-up-banner-subtitle {
+  color: #ffce7a;
+}
+
+#level-up-banner.level-up-banner--evolution .level-up-banner-star {
+  color: #ffce7a;
+  text-shadow: 0 0 16px #ffb35cdd;
+}
+
+@keyframes levelUpBannerIn {
+  0% { opacity: 0; transform: translateX(-50%) scale(0.7); }
+  12% { opacity: 1; transform: translateX(-50%) scale(1.08); }
+  22% { transform: translateX(-50%) scale(1); }
+  85% { opacity: 1; transform: translateX(-50%) scale(1); }
+  100% { opacity: 0; transform: translateX(-50%) scale(0.96); }
+}
+
+@keyframes levelUpBannerInEvolution {
+  0% { opacity: 0; transform: translateX(-50%) scale(0.7); }
+  10% { opacity: 1; transform: translateX(-50%) scale(1.1); }
+  18% { transform: translateX(-50%) scale(1); }
+  88% { opacity: 1; transform: translateX(-50%) scale(1); }
+  100% { opacity: 0; transform: translateX(-50%) scale(0.96); }
+}
+
+@keyframes levelUpRingExpand {
+  0% { opacity: 0.9; transform: scale(0.92); }
+  100% { opacity: 0; transform: scale(1.18); }
+}
+
+#damage-flash {
+  position: fixed;
+  inset: 0;
+  z-index: 7;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 55%,
+    #b3241f 100%
+  );
+}
+
+#damage-flash[hidden] { display: none; }
+
+/* ==========================================================================
+   Death screen — full destruction sequence UI shown while the player is
+   in PlayerHealth's dead state (see Game.js's playerHealth.onDeath /
+   onRespawn). Sits above #game-notice / #damage-flash since it's the
+   dominant state of the screen while active.
+   ========================================================================== */
+
+#death-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(ellipse at center, #1a0505d9 0%, #05070ae6 70%);
+  backdrop-filter: blur(6px);
+  animation: deathScreenFadeIn 0.4s ease-out;
+  pointer-events: none;
+}
+
+#death-screen[hidden] { display: none; }
+
+#death-screen::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg, #ff2d2d14 0px, transparent 2px, transparent 4px
+  );
+  animation: deathScreenScan 6s linear infinite;
+  mix-blend-mode: screen;
+}
+
+.death-screen-inner {
+  position: relative;
+  text-align: center;
+  padding: 2rem 3rem;
+  border: 1px solid #ff4d4d55;
+  border-radius: 1rem;
+  background: #0c0607cc;
+  box-shadow: 0 0 60px #ff2d2d33, inset 0 0 40px #00000066;
+  animation: deathScreenPulse 1.6s ease-in-out infinite;
+}
+
+.death-screen-icon {
+  font-size: 2.6rem;
+  line-height: 1;
+  color: #ff5b52;
+  text-shadow: 0 0 16px #ff2d2d99;
+  margin-bottom: 0.4rem;
+}
+
+.death-screen-title {
+  margin: 0 0 0.3rem;
+  font-size: clamp(1.4rem, 4vw, 2.2rem);
+  letter-spacing: 0.16em;
+  color: #ff8a83;
+  text-shadow: 0 0 12px #ff2d2d66;
+}
+
+.death-screen-subtitle {
+  margin: 0 0 1.1rem;
+  color: #ffb3ae;
+  letter-spacing: 0.05em;
+  font-size: 0.95rem;
+  opacity: 0.85;
+}
+
+.death-screen-countdown {
+  margin: 0;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: #ffe28a;
+  font-size: 1.05rem;
+}
+
+#death-screen-timer {
+  display: inline-block;
+  min-width: 1.4ch;
+  font-size: 1.4rem;
+  color: #fff;
+  animation: deathScreenTick 1s ease-out;
+}
+
+@keyframes deathScreenFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes deathScreenPulse {
+  0%, 100% { box-shadow: 0 0 60px #ff2d2d33, inset 0 0 40px #00000066; }
+  50% { box-shadow: 0 0 90px #ff2d2d55, inset 0 0 50px #00000088; }
+}
+
+@keyframes deathScreenScan {
+  from { transform: translateY(0); }
+  to { transform: translateY(40px); }
+}
+
+@keyframes deathScreenTick {
+  from { transform: scale(1.5); opacity: 0.3; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* ==========================================================================
+   Online Players panel — minimized by default. A small always-visible pill
+   (icon + live count) expands into the full status/leaderboard card. Lives
+   in the top-left column, below #open-menu, and never grows large enough
+   to compete with the driving HUD: --op-reserved (set from JS to the
+   panel's actual rendered bottom edge, in either state) is what keeps the
+   mobile HUD from ever sitting underneath it — see the
+   body.mobile-controls-active #hud rule further down.
+   ========================================================================== */
+
+.op-panel {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0px) + 4.6rem);
+  left: calc(env(safe-area-inset-left, 0px) + 1rem);
+  z-index: 9;
+  width: min(180px, calc(100vw - 2rem));
+  max-height: min(60vh, 420px);
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #ffffff24;
+  border-radius: 0.7rem;
+  background: #0c1623df;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 10px 30px #00000040;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  overflow: hidden;
+  transition: width 0.22s ease, box-shadow 0.22s ease;
+}
+
+.op-toggle {
+  all: unset;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  width: 100%;
+  padding: 0.5rem 0.7rem;
+  cursor: pointer;
+  color: #eef4ff;
+  font: inherit;
+  font-weight: 700;
+  border-radius: 0.7rem;
+  transition: background 0.12s ease;
+}
+
+.op-toggle:hover { background: #ffffff10; }
+
+.op-toggle:focus-visible {
+  outline: 2px solid #7de2bf;
+  outline-offset: -2px;
+}
+
+.op-toggle-icon {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.op-toggle-count {
+  flex: 1 1 auto;
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+  color: #cdeeff;
+  white-space: nowrap;
+}
+
+.op-toggle-chevron {
+  flex: 0 0 auto;
+  font-size: 0.7rem;
+  color: #9fb4c6;
+  transition: transform 0.22s ease;
+}
+
+.op-panel--expanded .op-toggle-chevron {
+  transform: rotate(180deg);
+}
+
+.op-panel--expanded .op-toggle {
+  border-radius: 0.7rem 0.7rem 0 0;
+  border-bottom: 1px solid #ffffff1a;
+}
+
+/* Grid-row collapse trick: animates smoothly to the content's natural
+   height without JS having to measure or hardcode it. */
+.op-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.26s ease;
+}
+
+.op-panel--expanded .op-body {
+  grid-template-rows: 1fr;
+}
+
+.op-body-inner {
+  min-height: 0;
+  overflow: hidden auto;
+  padding: 0 0.75rem;
+}
+
+.op-panel--expanded .op-body-inner {
+  padding: 0.65rem 0.75rem 0.8rem;
+}
+
+.op-status {
+  font-weight: 700;
+  color: #7de2bf;
+}
+
+.op-count {
+  margin-top: 0.15rem;
+  color: #cdeeff;
+}
+
+.op-details {
+  display: block;
+  margin-top: 0.3rem;
+  opacity: 0.75;
+}
+
+.op-disconnect {
+  display: block;
+  margin: 0.55rem 0 0;
+  padding: 0.4rem 0.65rem;
+  font-size: 0.75rem;
+}
+
+.op-leaderboard-heading {
+  display: block;
+  margin-top: 0.6rem;
+}
+
+.op-leaderboard-list {
+  margin: 0.3rem 0 0;
+  padding-left: 1.1rem;
+}
+
+.op-leaderboard-list[hidden],
+.op-leaderboard-empty[hidden] { display: none; }
+
+small {
+  display: block;
+  line-height: 1.6;
+  opacity: 0.8;
+}
+
+#debug {
+  /* Dev-only diagnostics panel. Kept in the DOM (DiagnosticsExport /
+     InputDiscoveryPanel append/query into it) but never shown to players. */
+  display: none !important;
+  top: calc(env(safe-area-inset-top, 0px) + 1rem);
+  right: calc(env(safe-area-inset-right, 0px) + 1rem);
+  max-width: min(440px, calc(100vw - 2rem));
+  max-height: 50vh;
+  overflow: auto;
+}
+
+summary { cursor: pointer; }
+
+pre {
+  font-size: 0.75rem;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.debug-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.8rem;
+}
+
+.debug-actions button {
+  margin: 0;
+  padding: 0.55rem 0.75rem;
+  border-radius: 0.4rem;
+  font-size: 0.8rem;
+}
+
+#diagnostics-status {
+  margin: 0.6rem 0;
+  max-width: 38ch;
+  color: #7de2bf;
+  font-size: 0.8rem;
+}
+
+#input-debug {
+  user-select: text;
+}
+
+#control-status {
+  max-width: 42ch;
+  color: #f5d68a;
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+.debug-actions button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+#driving-status {
+  max-width: 42ch;
+  color: #c7dbf6;
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+.presentation-setting {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-top: 0.8rem;
+  font-size: 0.8rem;
+}
+
+.presentation-setting input[type="range"] {
+  width: 130px;
+}
+
+#presentation-status {
+  max-width: 42ch;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: #c7dbf6;
+}
+
+.presentation-options,
+.camera-options,
+.audio-options {
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #ffffff24;
+}
+
+.presentation-options .presentation-setting,
+.camera-options .presentation-setting,
+.audio-options .presentation-setting {
+  justify-content: space-between;
+}
+
+#settings-save-status {
+  color: #7de2bf;
+  font-size: 0.75rem;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.hud-mode-options {
+  display: flex;
+  gap: 0.5rem;
+  margin: 0.6rem 0 0;
+  padding: 0;
+  border: 0;
+}
+
+.hud-mode-option {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.7rem;
+  font-size: 0.75rem;
+  color: #c7dbf6cc;
+  background: #101a2680;
+  border: 1px solid #ffffff22;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.hud-mode-option:has(input:checked) {
+  color: #eef4ff;
+  background: #1a2838a0;
+  border-color: #5fd9ff66;
+}
+
+.hud-mode-option input[type="radio"] {
+  accent-color: #5fd9ff;
+}
+
+#open-menu {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0px) + 1rem);
+  left: calc(env(safe-area-inset-left, 0px) + 1rem);
+  margin: 0;
+  z-index: 3;
+  padding: clamp(0.6rem, 2vw, 0.9rem) clamp(0.9rem, 3vw, 1.5rem);
+  background: linear-gradient(180deg, #263a4f, #16212e);
+  color: #eef4ff;
+  border: 1px solid #ffffff26;
+  box-shadow: 0 10px 26px -6px #00000090, inset 0 1px 0 #ffffff20;
+}
+
+#open-menu:hover { background: linear-gradient(180deg, #2c4460, #1a2836); }
+
+#open-menu[hidden],
+#settings-menu[hidden],
+[data-settings-page][hidden] {
+  display: none;
+}
+
+/* ==========================================================================
+   HUD visibility toggle (DEFAULT / SIMPLIFIED / HIDE ALL)
+   ========================================================================== */
+
+/* Mirrors #open-menu's corner-chip treatment but sits top-right so it
+   never collides with it — and unlike #open-menu, this lives outside
+   #hud/#combat-hud entirely so [data-hud-mode="hidden"] below can hide
+   the rest of the HUD without also hiding the control that brings it
+   back. */
+#hud-mode-toggle {
+  position: fixed;
+  /* Explicit — this button gets moved inside #mobile-controls (which is
+     pointer-events: none) on touch devices, and pointer-events inherits,
+     so without this it silently becomes untappable. */
+  pointer-events: auto;
+  top: calc(env(safe-area-inset-top, 0px) + 1rem);
+  right: calc(env(safe-area-inset-right, 0px) + 1rem);
+  margin: 0;
+  z-index: 3;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: #c7dbf6cc;
+  background: #101a2680;
+  border: 1px solid #ffffff22;
+  border-radius: 0.5rem;
+  backdrop-filter: blur(6px);
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+#hud-mode-toggle:hover {
+  background: #1a2838a0;
+  color: #eef4ff;
+}
+
+#hud-mode-toggle[hidden] { display: none; }
+
+/* SIMPLIFIED: keep speed/RPM (the gauge), gear, critical warnings, and
+   critical combat state (player HP). Drop everything else that isn't
+   needed moment-to-moment while driving. */
+body[data-hud-mode="simplified"] .dash-secondary,
+body[data-hud-mode="simplified"] .dash-engine-pill,
+body[data-hud-mode="simplified"] .dash-clutch-row,
+body[data-hud-mode="simplified"] .dash-boost-row,
+body[data-hud-mode="simplified"] #keyboard-panel,
+body[data-hud-mode="simplified"] #boss-hud,
+body[data-hud-mode="simplified"] .combat-row:has(#player-xp-fill) {
+  display: none;
+}
+
+/* HIDE ALL: no normal HUD. Temporary system notices (#game-notice,
+   damage flash, death screen) live outside #hud/#combat-hud already, so
+   they're unaffected — only the persistent driving/combat readouts and
+   the keyboard hint go away. The toggle itself lives outside #hud too,
+   so it's never swept up by this rule. */
+body[data-hud-mode="hidden"] #hud,
+body[data-hud-mode="hidden"] #combat-hud {
+  display: none;
+}
+
+#settings-menu {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: calc(env(safe-area-inset-top, 0px) + 1rem)
+            calc(env(safe-area-inset-right, 0px) + 1rem)
+            calc(env(safe-area-inset-bottom, 0px) + 1rem)
+            calc(env(safe-area-inset-left, 0px) + 1rem);
+  background: #020812c9;
+  backdrop-filter: blur(7px);
+}
+
+.settings-window {
+  width: min(720px, 100%);
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 1.5rem;
+  border: 1px solid #ffffff24;
+  border-radius: 1rem;
+  background: #101d2b;
+  box-shadow: 0 25px 100px #0008;
+}
+
+.settings-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.settings-header h2 {
+  margin: 0;
+  letter-spacing: 0.15em;
+}
+
+.settings-header p,
+.settings-help {
+  color: #b0c1d4;
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.settings-header button {
+  margin: 0;
+}
+
+.settings-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.settings-tabs button {
+  margin: 0;
+  background: #253b51;
+  color: #edf6ff;
+}
+
+.settings-tabs button[aria-selected="true"] {
+  background: #7de2bf;
+  color: #0a241b;
+}
+
+.settings-window .presentation-setting {
+  justify-content: space-between;
+}
+
+.settings-window input[type="range"] {
+  width: min(230px, 45%);
+}
+
+.settings-window .debug-actions {
+  margin-bottom: 0.8rem;
+}
+
+#settings-menu :focus-visible {
+  outline: 2px solid #7de2bf;
+  outline-offset: 4px;
+}
+
+#hud #start-engine {
+  display: block;
+  margin: 0.6rem 0;
+  padding: 0.6rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.wheel-calibration {
+  margin-top: 1.2rem;
+  padding-top: 1rem;
+  border-top: 1px solid #ffffff24;
+}
+
+.wheel-calibration [hidden] {
+  display: none !important;
+}
+
+.wheel-calibration [data-calibration="instruction"] {
+  padding: 0.8rem;
+  border-radius: 0.5rem;
+  background: #203449;
+  color: #edf6ff;
+  line-height: 1.5;
+}
+
+.wheel-calibration [data-calibration="status"] {
+  color: #7de2bf;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+/* ---- Step wizard ---- */
+
+.calib-wizard {
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px solid #ffffff22;
+  border-radius: 0.7rem;
+  background: #0d1620b0;
+}
+
+.calib-wizard-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.calib-wizard-kicker {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #8fb3d6;
+}
+
+.calib-wizard-progress {
+  font-size: 0.75rem;
+  color: #c7dbf6cc;
+  white-space: nowrap;
+}
+
+.calib-progress-track {
+  margin-top: 0.6rem;
+  height: 4px;
+  border-radius: 999px;
+  background: #ffffff1a;
+  overflow: hidden;
+}
+
+.calib-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: #5fd9ff;
+  border-radius: inherit;
+  transition: width 0.2s ease;
+}
+
+.calib-wizard-title {
+  margin: 0.8rem 0 0.2rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: #edf6ff;
+  text-transform: uppercase;
+}
+
+.calib-wizard [data-calibration="instruction"] {
+  margin-top: 0.3rem;
+}
+
+.calib-live {
+  margin: 0.9rem 0;
+}
+
+.calib-live-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #8fb3d6;
+}
+
+.calib-live-track {
+  position: relative;
+  margin-top: 0.35rem;
+  height: 10px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #253b51, #16212e, #253b51);
+  border: 1px solid #ffffff22;
+}
+
+.calib-live-center {
+  position: absolute;
+  top: -3px;
+  left: 50%;
+  width: 1px;
+  height: 16px;
+  background: #ffffff33;
+}
+
+.calib-live-dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #5fd9ff;
+  box-shadow: 0 0 10px #5fd9ffaa;
+  transform: translate(-50%, -50%);
+  transition: left 0.05s linear;
+}
+
+.calib-live-value {
+  margin: 0.4rem 0 0;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.75rem;
+  color: #c7dbf6cc;
+  text-align: right;
+}
+
+.calib-error {
+  margin-top: 1rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid #ff8a8a44;
+  border-radius: 0.6rem;
+  background: #2a1414b0;
+}
+
+.calib-error-title {
+  margin: 0 0 0.2rem;
+  font-weight: 700;
+  color: #ffb4b4;
+}
+.name-entry {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  width: min(320px, 100%);
+}
+
+.name-entry-kicker {
+  margin: 0 0 0.3rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #7de2bf;
+}
+
+.name-entry label {
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #b0c1d4;
+}
+
+.name-entry input {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 1px solid #ffffff24;
+  border-radius: 0.6rem;
+  background: #0c1623d9;
+  color: #eef4ff;
+  font: inherit;
+  text-align: center;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.name-entry input::placeholder { color: #6f8296; }
+
+.name-entry input:focus-visible {
+  outline: none;
+  border-color: #7de2bf;
+  box-shadow: 0 0 0 3px #7de2bf33;
+}
+
+#name-error {
+  min-height: 1.1em;
+  margin: 0;
+  font-size: 0.75rem;
+  color: #f5a3a3;
+}
+
+.intro-drive-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  width: min(320px, 100%);
+  margin-top: 0.2rem;
+  padding: 1rem 1.5rem;
+  font-size: 1.05rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: linear-gradient(180deg, #93f0cd, #55c99e);
+  box-shadow: 0 10px 30px -8px #7de2bf80, inset 0 1px 0 #ffffff70;
+}
+
+.intro-drive-btn:hover { box-shadow: 0 12px 34px -6px #7de2bfb3, inset 0 1px 0 #ffffff70; }
+
+.intro-drive-btn:active { transform: scale(0.97); }
+
+.intro-drive-icon { font-size: 1.2rem; }
+
+/* ==========================================================================
+   Patch-notes card — same glass/border language as .intro-main and the
+   in-game HUD panels (#hud, #combat-hud), so the title screen reads as
+   part of one system instead of a bolted-on overlay.
+   ========================================================================== */
+
+.intro-patch {
+  grid-area: patch;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  max-height: min(420px, 52vh);
+  padding: clamp(1rem, 2.4vw, 1.3rem);
+  border: 1px solid #ffffff1f;
+  border-radius: 1rem;
+  background: #0c1623bf;
+  backdrop-filter: blur(10px);
+  animation: intro-rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.22s both;
+}
+
+.intro-patch-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex: 0 0 auto;
+  margin-bottom: 0.7rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid #ffffff1a;
+}
+
+.intro-patch-header h2 {
+  margin: 0;
+  font-size: 0.95rem;
+  letter-spacing: 0.06em;
+  color: #eef4ff;
+}
+
+.intro-patch-version {
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  color: #6f8296;
+}
+
+.intro-patch-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0 0.2rem 0 0;
+  list-style: none;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.intro-patch-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+}
+
+.intro-patch-icon {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.55rem;
+  font-size: 1rem;
+  background: color-mix(in srgb, var(--patch-color) 22%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--patch-color) 55%, transparent);
+}
+
+.intro-patch-copy { min-width: 0; }
+
+.intro-patch-name {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0 0 0.15rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #eef4ff;
+}
+
+.intro-patch-badge {
+  padding: 0.08rem 0.4rem;
+  border-radius: 999px;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #0a1019;
+  background: #7de2bf;
+}
+
+.intro-patch-desc {
+  margin: 0;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: #9fb4c6;
+}
+
+.intro-patch-list::-webkit-scrollbar,
+.intro::-webkit-scrollbar { width: 8px; }
+
+.intro-patch-list::-webkit-scrollbar-thumb,
+.intro::-webkit-scrollbar-thumb {
+  background: #ffffff26;
+  border-radius: 999px;
+}
+
+@keyframes intro-rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bg_loading { animation: none; }
+  .intro-brand, .intro-main, .intro-patch { animation: none; }
+  .calib-live-dot { transition: none; }
+  .calib-progress-fill { transition: none; }
+}
+
+@media (max-width: 900px) {
+  .intro-body {
+    grid-template-columns: 1fr;
+    grid-template-areas: "patch" "main";
+  }
+
+  .intro-patch { max-height: min(260px, 32vh); }
+}
+
+@media (max-width: 480px) {
+  .intro-kicker { display: none; }
+  .intro-patch-desc { font-size: 0.75rem; }
+}
+
+/* ==========================================================================
+   Chat — always present during gameplay, minimal by default, with
+   hide/resize controls the player can reach for. Sits in the opposite
+   corner from the driving HUD so the two never compete for attention.
+   ========================================================================== */
+
+#chat-panel {
+  --chat-width: 260px;
+  --chat-log-height: 96px;
+  --chat-font: 0.78rem;
+
+  position: fixed;
+  right: calc(env(safe-area-inset-right, 0px) + 1rem);
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 1rem);
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  width: min(var(--chat-width), calc(100vw - 2rem));
+  border: 1px solid #ffffff1f;
+  border-radius: 0.85rem;
+  background: linear-gradient(180deg, #0d1b28e3, #0a1420e3);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 14px 38px #00000055;
+  overflow: hidden;
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.16s ease, transform 0.16s ease,
+    width 0.18s ease;
+}
+
+#chat-panel[hidden] { display: none; }
+
+#chat-panel.chat-entering {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+#chat-panel.chat-size-normal {
+  --chat-width: 300px;
+  --chat-log-height: 160px;
+}
+
+#chat-panel.chat-size-expanded {
+  --chat-width: 340px;
+  --chat-log-height: 260px;
+  --chat-font: 0.85rem;
+}
+
+#chat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.6rem 0.5rem 0.8rem;
+  border-bottom: 1px solid #ffffff1a;
+}
+
+#chat-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #b7c8de;
+}
+
+#chat-header-actions {
+  display: flex;
+  gap: 0.3rem;
+}
+
+#chat-resize,
+#chat-hide {
+  margin: 0;
+  width: 1.7rem;
+  height: 1.7rem;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 0.5rem;
+  background: #ffffff12;
+  color: #d7e5f8;
+  font-size: 0.85rem;
+  line-height: 1;
+  transition: background 0.12s ease;
+}
+
+#chat-resize:hover,
+#chat-hide:hover {
+  background: #ffffff22;
+}
+
+#chat-log {
+  flex: 0 1 auto;
+  height: auto;
+  max-height: 200px;
+  min-height: 0;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  padding: 0.5rem 0.8rem;
+
+  scrollbar-width: thin;
+  scrollbar-color: #5d7188 #ffffff08;
+
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.chat-entry {
+  margin: 0 0 0.35rem;
+  font-size: var(--chat-font);
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+  color: #e6eefb;
+}
+
+.chat-entry-name {
+  font-weight: 700;
+  color: #9fd8ff;
+}
+
+.chat-entry-local .chat-entry-name {
+  color: #7de2bf;
+}
+
+.chat-entry-system {
+  color: #93a5ba;
+  font-style: italic;
+}
+
+#chat-form {
+  display: flex;
+  gap: 0.45rem;
+  padding: 0.55rem 0.7rem;
+  border-top: 1px solid #ffffff1a;
+}
+
+#chat-input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid #ffffff1f;
+  border-radius: 0.55rem;
+  background: #0b1522;
+  color: #eef4ff;
+  font: inherit;
+  font-size: var(--chat-font);
+  transition: border-color 0.12s ease;
+}
+
+#chat-input::placeholder {
+  color: #7f90a6;
+}
+
+#chat-input:focus-visible {
+  outline: none;
+  border-color: #7de2bf;
+}
+
+#chat-send {
+  margin: 0;
+  padding: 0.5rem 0.85rem;
+  border-radius: 0.55rem;
+  font-size: 0.78rem;
+}
+
+#chat-show {
+  position: fixed;
+  right: calc(env(safe-area-inset-right, 0px) + 1rem);
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 1rem);
+  z-index: 5;
+  margin: 0;
+  padding: 0.55rem 0.95rem;
+  border-radius: 0.6rem;
+  background: #ffffff12;
+  backdrop-filter: blur(8px);
+  border: 1px solid #ffffff1f;
+  color: #edf6ff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  box-shadow: 0 10px 26px #00000040;
+}
+
+#chat-show[hidden] { display: none; }
+
+/* Touch driving controls own the bottom of the screen; keep chat from
+   sitting on top of the accelerator pedal or the shifter. Docked below
+   #hud-mode-toggle (also pinned top-right, at top: 1rem) rather than on
+   top of it — the two would otherwise land in exactly the same spot,
+   with chat's higher z-index hiding the HUD toggle underneath it. */
+body.mobile-controls-active #chat-panel,
+body.mobile-controls-active #chat-show {
+  top: calc(env(safe-area-inset-top, 0px) + 1rem + 2.4rem);
+  right: calc(env(safe-area-inset-right, 0px) + 1rem);
+  bottom: auto;
+}
+
+body.mobile-controls-active #chat-panel {
+  --chat-width: 220px;
+  --chat-log-height: 80px;
+}
+
+body.mobile-controls-active #chat-panel.chat-size-normal,
+body.mobile-controls-active #chat-panel.chat-size-expanded {
+  --chat-width: 240px;
+  --chat-log-height: 130px;
+}
+
+/* ==========================================================================
+   Mobile HUD layout — moves the status readout out of the bottom-left
+   corner (where it used to sit directly on top of the steering pad) into
+   its own top-left zone, clear of #open-menu above it. Zones, matching
+   the touch controls below: top-left = status, bottom-left = steering,
+   bottom-right = pedals + turret, bottom-center = shifter, top-right =
+   chat. Desktop (no .mobile-controls-active) is untouched.
+   ========================================================================== */
+
+/* Mobile keeps its own tiny dashboard pinned to the exact same bottom
+   baseline as the steering wheel and pedals (not floating above them),
+   sized to fit the horizontal gap between the two — this is what keeps
+   it clear of the car, which fills most of the screen above that line
+   in the default chase camera. Only speed + gear are shown by default;
+   RPM/boost/warnings are dropped here since there simply isn't room,
+   and the turbo state already reads from the TURBO touch button itself.
+   The keyboard panel never applies on touch, since MobileControls owns
+   input in that mode. */
+body.mobile-controls-active #hud {
+  /* left: calc(
+    env(safe-area-inset-left, 0px) + 1rem +
+    (2 * clamp(76px, 15vw, 108px)) + clamp(0.6rem, 2vw, 1rem) + 0.6rem
+  );
+  right: calc(
+    env(safe-area-inset-right, 0px) + 1rem +
+    clamp(70px, 20vw, 100px) + 0.6rem +
+    clamp(64px, 20vw, 88px) + 0.6rem
+  );
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 1rem); */
+
+  bottom: 130px;
+  
+  transform: none;
+  align-items: center;
+  max-width: none;
+}
+
+/* Portrait doesn't have the width to squeeze the dashboard between the
+   steering cluster and the pedals/turbo columns the way landscape does
+   (left-clearance + right-clearance can add up to more than the screen
+   is wide). Instead, stop sharing the row with them: go full-width with
+   small side margins, and sit above the tallest bottom-row column
+   (the pedal stack, up to 3 pedals in H-shifter mode) instead of
+   beside it. */
+/* @media (orientation: portrait) {
+  body.mobile-controls-active #hud {
+    left: calc(env(safe-area-inset-left, 0px) + 1rem);
+    right: calc(env(safe-area-inset-right, 0px) + 1rem);
+    bottom: calc(
+      env(safe-area-inset-bottom, 0px) + 1rem +
+      (3 * clamp(72px, 15vh, 108px)) +
+      (2 * clamp(0.5rem, 1.6vh, 0.8rem)) + 0.8rem
+    );
+  }
+} */
+
+body.mobile-controls-active .kbd-panel,
+body.mobile-controls-active .dash-secondary,
+body.mobile-controls-active .dash-warnings,
+body.mobile-controls-active .dash-boost-row,
+body.mobile-controls-active .dash-rpm-value,
+body.mobile-controls-active .dash-clutch-row {
+  display: none;
+}
+
+body.mobile-controls-active #hud #start-engine {
+  display: none;
+}
+
+/* In manual mode the H-shifter also docks bottom-center on the same
+   baseline (see .mc-shifter below) and is wider than the mini-dash, so
+   the mini-dash steps up to clear it instead of overlapping. :has() lets
+   this react to the shifter's real hidden/visible state without any
+   extra JS wiring. */
+body.mobile-controls-active:has(.mc-shifter:not([hidden])) #hud {
+  bottom: calc(env(safe-area-inset-bottom, 0px) + clamp(178px, 50vw, 258px));
+}
+
+/* The online-players panel (top-left) can grow tall when expanded, and
+   chat (top-right) is the same corner combat-hud used on desktop — so on
+   mobile, combat-hud moves to top-left, docked below the online-players
+   panel's real measured height via --op-reserved (see MultiplayerClient),
+   instead of colliding with chat. */
+body.mobile-controls-active #combat-hud {
+  top: var(--op-reserved, calc(env(safe-area-inset-top, 0px) + 4.4rem));
+  right: auto;
+  left: calc(env(safe-area-inset-left, 0px) + 1rem);
+  transition: top 0.22s ease;
+}
+
+body.mobile-controls-active .dash {
+  padding: 0.4rem 0.5rem 0.35rem;
+  gap: 0.2rem;
+}
+
+body.mobile-controls-active .dash-cluster {
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+body.mobile-controls-active .dash-gauge--speed .dash-gauge-ring {
+  width: clamp(58px, 22vw, 72px);
+  height: clamp(58px, 22vw, 72px);
+}
+
+body.mobile-controls-active .dash-speed-value {
+  font-size: clamp(1rem, 4.4vw, 1.25rem);
+}
+
+body.mobile-controls-active .dash-speed-unit {
+  font-size: 0.5rem;
+  padding: 0.05rem 0.35rem;
+}
+
+body.mobile-controls-active .dash-gauge-title {
+  display: none;
+}
+
+body.mobile-controls-active .dash-info-col {
+  min-width: 0;
+  width: 100%;
+  gap: 0;
+}
+
+body.mobile-controls-active .dash-gear-badge {
+  justify-content: center;
+  gap: 0.3rem;
+  padding: 0.15rem 0.4rem;
+}
+
+body.mobile-controls-active .dash-gear-mode {
+  display: none;
+}
+
+body.mobile-controls-active .dash-gear-value {
+  font-size: 1.1rem;
+}
+
+body.mobile-controls-active .dash-engine-pill {
+  align-self: center;
+  font-size: 0.5rem;
+  padding: 0.05rem 0.3rem;
+}
+
+/* Landscape phones are short as well as narrow, so the already-tiny
+   mobile dash just needs to shrink a little further here, not move —
+   it's already anchored to the same bottom baseline as the controls. */
+@media (max-height: 480px) and (orientation: landscape) {
+  body.mobile-controls-active #hud {
+    max-width: clamp(66px, 17vh, 84px) !important;
+  }
+
+  body.mobile-controls-active #hud {
+  left: calc(
+    env(safe-area-inset-left, 0px) + 1rem +
+    (2 * clamp(76px, 15vw, 108px)) + clamp(0.6rem, 2vw, 1rem) + 0.6rem
+  );
+  right: calc(
+    env(safe-area-inset-right, 0px) + 1rem +
+    clamp(70px, 20vw, 100px) + 0.6rem +   /* pedals column */
+    clamp(64px, 20vw, 88px) + 0.6rem      /* turbo/turret column */
+  );
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 1rem);
+}
+
+  body.mobile-controls-active:has(.mc-shifter:not([hidden])) #hud {
+    bottom: calc(env(safe-area-inset-bottom, 0px) + clamp(120px, 40vh, 170px));
+  }
+
+  body.mobile-controls-active .dash {
+    padding: 0.25rem 0.35rem 0.22rem;
+  }
+
+  body.mobile-controls-active .dash-gauge--speed .dash-gauge-ring {
+    width: clamp(38px, 13vh, 50px);
+    height: clamp(38px, 13vh, 50px);
+  }
+
+  body.mobile-controls-active .dash-speed-value {
+    font-size: clamp(0.68rem, 3.4vh, 0.88rem);
+  }
+
+  body.mobile-controls-active .dash-speed-unit {
+    display: none;
+  }
+
+  body.mobile-controls-active .dash-gear-value {
+    font-size: 0.8rem;
+  }
+
+  body.mobile-controls-active .dash-engine-pill {
+    display: none;
+  }
+}
+
+
+
+
+/* ==========================================================================
+   Mobile touch driving controls
+   ========================================================================== */
+
+#mobile-controls {
+  position: fixed;
+  inset: 0;
+  z-index: 6;
+  /* The layer itself never intercepts input; only its individual
+     controls (steering pad, pedals, shifter track) opt back in. This
+     is what lets settings/dialog UI above it, and passive HUD text
+     inside it, keep working normally. */
+  pointer-events: none;
+}
+
+#mobile-controls[hidden] { display: none; }
+
+.mc-steer-cluster,
+.mc-shifter,
+.mc-corner-actions {
+  position: fixed;
+  pointer-events: none;
+}
+
+/* --- Steering: large held LEFT / RIGHT buttons ------------------------ */
+/* Two large held buttons anchor to the same bottom-left zone the old
+   drag-joystick used to, sized with clamp() so they scale across
+   16:9 -> 20:9 phones and wider tablets instead of one fixed size. */
+
+.mc-steer-cluster {
+  left: calc(env(safe-area-inset-left, 0px) + 1rem);
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 1rem);
+  display: flex;
+  align-items: flex-end;
+  gap: clamp(0.6rem, 2vw, 1rem);
+}
+
+.mc-steer-btn {
+  display: grid;
+  place-items: center;
+  width: clamp(76px, 15vw, 108px);
+  height: clamp(88px, 20vh, 132px);
+  border-radius: 1.1rem;
+  border: 2px solid #5fd9ff4d;
+  background: linear-gradient(180deg, #17263880, #0c1623cc);
+  backdrop-filter: blur(6px);
+  box-shadow: inset 0 0 0 1px #ffffff0d, inset 0 0 24px #00000050, 0 8px 20px -8px #000a;
+  color: #eef4ffcc;
+  pointer-events: auto;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  transition: background 0.1s ease, border-color 0.1s ease, box-shadow 0.1s ease;
+}
+
+.mc-steer-icon {
+  width: 46%;
+  height: 46%;
+  display: grid;
+  place-items: center;
+}
+
+.mc-steer-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Pressed/active state: brighter cyan border + glow, matching the
+   turret/turbo/pedal "mc-pressed" treatment used everywhere else in
+   this file so every touch control gives the same feedback language. */
+.mc-steer-btn.mc-pressed {
+  border-color: #5fd9ffcc;
+  background: linear-gradient(180deg, #16283a, #0e1c2b);
+  box-shadow: inset 0 0 0 1px #5fd9ff33, inset 0 0 24px #5fd9ff22, 0 0 22px -4px #5fd9ff66;
+  color: #eef4ff;
+}
+
+@media (hover: hover) {
+  .mc-steer-btn:hover { border-color: #5fd9ff80; }
+}
+
+/* --- Corner actions: fullscreen + camera (mobile landscape) ----------- */
+/* Sits top-right, stacked below #hud-mode-toggle + the collapsed chat
+   button that already occupy that corner (see the
+   body.mobile-controls-active #chat-panel rule below, which reserves the
+   same "+1rem then +2.4rem" column) so this never lands on top of
+   either. Only shown once touch controls are active — desktop keeps
+   using the settings-menu entries for both. */
+
+.mc-corner-actions {
+  /* top: calc(env(safe-area-inset-top, 0px) + 5.6rem);
+  right: calc(env(safe-area-inset-right, 0px) + 1rem); */
+
+  top: 0;
+  right: 50%;
+  transform: translateX(50%);
+  display: none;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+body.mobile-controls-active .mc-corner-actions {
+  display: flex;
+  flex-direction: row;
+}
+
+.mc-corner-btn {
+  display: grid;
+  place-items: center;
+  width: clamp(2.4rem, 6vw, 2.9rem);
+  height: clamp(2.4rem, 6vw, 2.9rem);
+  padding: 0;
+  border-radius: 0.65rem;
+  border: 1px solid #ffffff22;
+  background: #101a2680;
+  color: #c7dbf6dd;
+  backdrop-filter: blur(6px);
+  pointer-events: auto;
+  touch-action: manipulation;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.mc-corner-btn svg {
+  width: 58%;
+  height: 58%;
+}
+
+.mc-corner-btn:active,
+.mc-corner-btn--active {
+  background: #1a2838a0;
+  border-color: #5fd9ff88;
+  color: #eef4ff;
+}
+
+
+.mc-hud-pedal_clusters{
+  display: flex;
+  height: 100px;
+
+  flex-direction: column-reverse;
+
+  position: fixed;
+
+  gap: 0;
+
+   right: 10px;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 1rem);
+
+  
+}
+
+/* --- Action cluster: handbrake + turbo + turret ----------------------- */
+/* Turbo/turret share one fixed anchor immediately to the left of the
+   pedal stack (same width formula the mobile HUD offset below uses) so
+   they reflow together as a column instead of needing two separately-
+   tuned positions. The handbrake lives in the same group in markup, but
+   keeps its own independent fixed anchor (see .mc-handbrake-btn below)
+   so it never shares a hitbox with turbo/turret or the pedals. */
+
+.mc-action-cluster {
+  /* right: calc(
+    env(safe-area-inset-right, 0px) + 1rem +
+    clamp(70px, 20vw, 100px) + 0.6rem
+  );
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 1rem); */
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  gap: clamp(0.6rem, 1.8vh, 1rem);
+  transform: scale(0.8);
+}
+
+/* --- Pedals ------------------------------------------------------------ */
+
+.mc-pedals {
+  /* right: calc(env(safe-area-inset-right, 0px) + 1rem);
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 1rem); */
+  display: flex;
+  flex-direction: column-reverse;
+  gap: clamp(0.5rem, 1.6vh, 0.8rem);
+}
+
+.mc-pedal {
+  pointer-events: auto;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  width: clamp(70px, 20vw, 100px);
+  height: clamp(72px, 15vh, 108px);
+  border-radius: 0.9rem;
+  border: 1px solid #ffffff2e;
+  background: linear-gradient(180deg, #1c2d4180, #14202f80);
+  backdrop-filter: blur(6px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  color: #eef4ffcc;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  box-shadow: inset 0 1px 0 #ffffff14, 0 6px 14px #00000030;
+  transition: background 0.08s ease, transform 0.08s ease, box-shadow 0.08s ease;
+}
+
+.mc-pedal-cap {
+  display: grid;
+  place-items: center;
+  width: 46%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #ffffff1c, #ffffff06);
+  box-shadow: inset 0 2px 0 #ffffff26, inset 0 -3px 6px #00000040;
+}
+
+.mc-pedal-icon {
+  width: 60%;
+  height: 60%;
+  line-height: 1;
+  opacity: 0.92;
+}
+
+.mc-pedal-icon svg {
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+}
+
+.mc-pedal-label {
+  font-size: 0.68em;
+}
+
+.mc-pedal[hidden] { display: none; }
+
+.mc-pedal-accel { border-color: #7de2bf55; }
+.mc-pedal-brake { border-color: #f5a3a355; }
+.mc-pedal-clutch { border-color: #f5d68a55; }
+
+.mc-pedal.mc-pressed {
+  transform: scale(0.94);
+  box-shadow: inset 0 0 0 2px currentColor, 0 0 22px #ffffff22;
+}
+
+.mc-pedal-accel.mc-pressed {
+  background: #7de2bf40;
+  color: #baf5da;
+  box-shadow: inset 0 0 0 2px #7de2bf, 0 0 22px #7de2bf55;
+}
+
+.mc-pedal-brake.mc-pressed {
+  background: #f5a3a340;
+  color: #ffd3d3;
+  box-shadow: inset 0 0 0 2px #f5a3a3, 0 0 22px #f5a3a355;
+}
+
+.mc-pedal-clutch.mc-pressed {
+  background: #f5d68a40;
+  color: #ffe9b8;
+  box-shadow: inset 0 0 0 2px #f5d68a, 0 0 22px #f5d68a55;
+}
+
+/* --- Handbrake ----------------------------------------------------------- */
+/* Lives in the markup as a child of .mc-action-cluster (grouped there with
+   turbo/turret for logical/organizational purposes), but keeps its own
+   independent fixed anchor on the right edge, vertically centered, so it
+   never shares a hitbox with the pedals/turbo/turret and stays reachable
+   with a thumb-flick up from the pedal area. */
+
+.mc-handbrake-btn {
+  position: relative;
+  /* Pushed further in than other edge controls (was 0.6rem) — a button
+     this close to the raw screen edge sits inside the OS's edge-swipe
+     gesture zone (back gesture / app switcher), especially in landscape,
+     so taps here were getting intercepted by the system instead of
+     reaching the page. */
+  /* right: calc(env(safe-area-inset-right, 0px) + 1.4rem); */
+  /* top: 10%; */
+  border-color: #f5745555;
+}
+
+.mc-handbrake-btn.mc-pressed {
+  background: #f5745540;
+  color: #ffd9c9;
+  box-shadow: inset 0 0 0 2px #f57455, 0 0 22px #f5745555;
+}
+
+/* --- Turret deploy button ------------------------------------------------ */
+
+.mc-turret-btn {
+  pointer-events: auto;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  margin: 0;
+  width: clamp(64px, 20vw, 88px);
+  height: clamp(64px, 15vh, 88px);
+  padding: 0;
+  border-radius: 0.9rem;
+  border: 1px solid #6fd0ff55;
+  background: #17263880;
+  backdrop-filter: blur(6px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.15rem;
+  color: #cdeeffcc;
+  transition: background 0.08s ease, transform 0.08s ease, box-shadow 0.08s ease;
+}
+
+.mc-turret-icon {
+  width: clamp(1.1rem, 4vw, 1.5rem);
+  height: clamp(1.1rem, 4vw, 1.5rem);
+  line-height: 1;
+}
+
+.mc-turret-icon svg,
+.mc-turbo-icon svg {
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+}
+
+.mc-turret-text {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.mc-turret-btn.mc-pressed {
+  transform: scale(0.94);
+  background: #6fd0ff40;
+  color: #eaf8ff;
+  box-shadow: inset 0 0 0 2px #6fd0ff, 0 0 22px #6fd0ff55;
+}
+
+/* --- Turbo/boost button -------------------------------------------------- */
+/* Same footprint/anchor pattern as the turret button above, but press-and-
+   hold (ready/active/cooldown) instead of tap-to-toggle -- see
+   MobileControls.bindTurbo()/setTurboState(). */
+
+.mc-turbo-btn {
+  pointer-events: auto;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  position: relative;
+  margin: 0;
+  width: clamp(64px, 20vw, 88px);
+  height: clamp(64px, 15vh, 88px);
+  padding: 0;
+  border-radius: 0.9rem;
+  border: 1px solid #ffb35c55;
+  background: #1c150e80;
+  backdrop-filter: blur(6px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.15rem;
+  color: #ffe3c2cc;
+  overflow: hidden;
+  transition: background 0.08s ease, transform 0.08s ease, box-shadow 0.08s ease;
+}
+
+.mc-turbo-icon {
+  width: clamp(1.1rem, 4vw, 1.5rem);
+  height: clamp(1.1rem, 4vw, 1.5rem);
+  line-height: 1;
+}
+
+.mc-turbo-text {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.mc-turbo-btn--active {
+  transform: scale(0.94);
+  background: #ff9a3c4d;
+  color: #fff1e0;
+  box-shadow: inset 0 0 0 2px #ff9a3c, 0 0 22px #ff9a3c77;
+}
+
+/* Cooldown sweep: a bottom-up fill that drains as --mc-turbo-cooldown-frac
+   (set every HUD tick by setTurboState()) counts down from 1 to 0. */
+.mc-turbo-btn--cooldown {
+  color: #ffe3c280;
+  border-color: #ffb35c33;
+}
+
+.mc-turbo-btn--cooldown::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: calc(var(--mc-turbo-cooldown-frac, 0) * 100%);
+  background: #00000066;
+  pointer-events: none;
+}
+
+/* --- H-shifter ----------------------------------------------------------- */
+
+.mc-shifter {
+  left: 50%;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 1rem);
+  transform: translateX(-50%);
+  width: clamp(200px, 46vw, 300px);
+}
+
+.mc-shifter[hidden] { display: none; }
+
+.mc-shifter-track {
+  width: 100%;
+  height: auto;
+  display: block;
+  pointer-events: auto;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  overflow: visible;
+}
+
+.mc-shifter-rail {
+  stroke: #ffffff40;
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+
+.mc-shifter-label {
+  fill: #c7dbf6;
+  font-size: 13px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+
+.mc-shifter-knob {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 34px;
+  height: 34px;
+  margin: -17px 0 0 -17px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 35% 30%, #4a6f8f, #1c2e40);
+  border: 1px solid #ffffff44;
+  box-shadow: 0 4px 12px #0008;
+  pointer-events: none;
+  transition: left 0.12s ease, top 0.12s ease;
+}
+
+.mc-shifter-gear {
+  position: absolute;
+  top: -1.8rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #7de2bf;
+  pointer-events: none;
+}
+
+.mc-shifter-engaged .mc-shifter-knob {
+  box-shadow: 0 0 0 5px #7de2bf44, 0 4px 12px #0008;
+}
+
+/* --- Rotate-device overlay ------------------------------------------------ */
+
+.mc-orientation-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 15;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  background: #060b12ee;
+  color: #eef4ff;
+  text-align: center;
+  pointer-events: none;
+}
+
+.mc-orientation-overlay.mc-visible {
+  display: flex;
+  pointer-events: auto;
+}
+
+.mc-orientation-icon {
+  font-size: 3rem;
+  animation: mc-rotate-hint 1.6s ease-in-out infinite;
+}
+
+.mc-orientation-overlay p {
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+.mc-orientation-overlay span {
+  color: #9fb4cc;
+  font-size: 0.85rem;
+}
+
+@keyframes mc-rotate-hint {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(90deg); }
+}
+
+/* ==========================================================================
+   Responsive breakpoints
+   ========================================================================== */
+
+/* Large phones / small tablets, portrait */
+@media (max-width: 900px) {
+  #debug {
+    max-width: min(360px, calc(100vw - 2rem));
+    font-size: 0.95em;
+  }
+
+  .settings-window {
+    width: min(600px, 100%);
+    padding: 1.1rem;
+  }
+}
+
+/* Phones */
+@media (max-width: 600px) {
+  #hud {
+    max-width: calc(100vw - 1.6rem);
+  }
+
+  .dash { gap: 0.4rem; padding: 0.6rem 0.8rem 0.5rem; }
+  .dash-secondary { gap: 0.18rem; }
+  .dash-pill { font-size: 0.72rem; }
+  .kbd-panel { padding: 0.6rem 0.7rem; }
+
+  .op-panel {
+    top: calc(env(safe-area-inset-top, 0px) + 4rem);
+    width: min(170px, calc(100vw - 1.6rem));
+    font-size: 0.75rem;
+  }
+
+  #combat-hud {
+    width: min(170px, calc(100vw - 1.6rem));
+    padding: 0.55rem 0.7rem;
+    font-size: 0.75rem;
+  }
+
+  .combat-row-value { font-size: 0.65rem; }
+
+  #game-notice {
+    font-size: 0.85rem;
+    padding: 0.55rem 1rem;
+  }
+
+  #level-up-banner {
+    padding: 0.7rem 1.4rem 0.9rem;
+    max-width: calc(100vw - 1.6rem);
+  }
+
+  #level-up-banner-level { font-size: clamp(1.5rem, 8vw, 2rem); }
+  .level-up-reward { font-size: 0.58rem; padding: 0.12rem 0.5rem; }
+
+  .death-screen-inner {
+    padding: 1.5rem 1.6rem;
+    max-width: calc(100vw - 2rem);
+  }
+
+  .death-screen-icon { font-size: 2.1rem; }
+
+  #debug {
+    max-width: calc(100vw - 1.6rem);
+    max-height: 40vh;
+  }
+
+  /* Even "expanded" chat stays well clear of dominating a phone screen. */
+  #chat-panel {
+    --chat-width: min(240px, calc(100vw - 1.6rem));
+    --chat-log-height: 84px;
+  }
+
+  #chat-panel.chat-size-normal {
+    --chat-width: min(260px, calc(100vw - 1.6rem));
+    --chat-log-height: 120px;
+  }
+
+  #chat-panel.chat-size-expanded {
+    --chat-width: min(280px, calc(100vw - 1.6rem));
+    --chat-log-height: 34vh;
+  }
+
+  .settings-tabs button {
+    flex: 1 1 auto;
+    text-align: center;
+    padding: 0.6rem 0.5rem;
+    font-size: 0.85rem;
+  }
+
+  .settings-window input[type="range"] {
+    width: min(160px, 42%);
+  }
+
+  #chat-log {
+    max-height: 120px;
+  }
+}
+
+/* Small phones */
+@media (max-width: 420px) {
+  /* The online-players toggle (top-left) and chat panel (top-right,
+     mobile) can otherwise both claim more than half the width of a
+     narrow phone and collide — tighten both here. */
+  #open-menu {
+    padding: 0.5rem 0.7rem;
+    font-size: 0.78rem;
+  }
+
+  body.mobile-controls-active #chat-panel {
+    --chat-width: min(170px, calc(100vw - 1.6rem));
+  }
+
+  body.mobile-controls-active #chat-panel.chat-size-normal,
+  body.mobile-controls-active #chat-panel.chat-size-expanded {
+    --chat-width: min(200px, calc(100vw - 1.6rem));
+  }
+
+  .mc-pedal {
+    width: clamp(58px, 22vw, 80px);
+    height: clamp(64px, 14vh, 88px);
+    font-size: 0.68rem;
+  }
+
+  .mc-steer-btn {
+    width: clamp(64px, 26vw, 92px);
+    height: clamp(76px, 17vh, 108px);
+  }
+
+  .mc-steer-cluster {
+    gap: 0.5rem;
+  }
+
+  .mc-turret-btn {
+    width: clamp(52px, 22vw, 72px);
+    height: clamp(52px, 13vh, 72px);
+  }
+
+  .mc-turbo-btn {
+    width: clamp(52px, 22vw, 72px);
+    height: clamp(52px, 13vh, 72px);
+  }
+
+  #hud #start-engine {
+    font-size: 0.78rem;
+    padding: 0.5rem 0.8rem;
+  }
+
+  .dash-gauge--speed .dash-gauge-ring {
+    width: clamp(96px, 22vw, 130px);
+    height: clamp(96px, 22vw, 130px);
+  }
+
+  .dash-gear-badge { min-width: 2.6rem; }
+
+  #hud {
+    flex-direction: column-reverse;
+    align-items: center;
+  }
+}
+
+/* Landscape phones: controls need to be compact vertically since the
+   viewport is short, not narrow. */
+@media (max-height: 480px) and (orientation: landscape) {
+  .intro { gap: 0.8rem; }
+  .intro-kicker { display: none; }
+  .intro-title { font-size: clamp(1.8rem, 6vh, 2.6rem); }
+  .intro-tagline { margin-top: 0.2rem; }
+  .intro-body { grid-template-columns: minmax(0, 1fr) minmax(0, 280px); grid-template-areas: "main patch"; }
+  .intro-main { padding: 0.9rem 1.1rem; gap: 0.55rem; }
+  .intro-patch { max-height: 40vh; padding: 0.8rem; }
+  .intro-drive-btn { padding: 0.7rem 1.2rem; }
+
+  
+
+  .mc-pedal {
+    height: clamp(56px, 26vh, 76px);
+    padding: 10px;
+  }
+
+  .mc-steer-btn {
+    width: clamp(72px, 13vw, 100px);
+    height: clamp(64px, 24vh, 96px);
+  }
+
+  .mc-steer-cluster {
+    gap: clamp(0.4rem, 1.4vh, 0.7rem);
+  }
+
+  /* Corner cluster sits lower on tall/normal phones (see the base rule
+     above) purely to clear #hud-mode-toggle + the collapsed chat button
+     stacked above it; here there's little vertical room to spare, so it
+     switches to a row and moves up closer to the top edge instead. */
+  .mc-corner-actions {
+    top: calc(env(safe-area-inset-top, 0px) + 3.4rem);
+    flex-direction: row;
+  }
+
+  .mc-hud-pedal_clusters{ flex-direction: row-reverse; gap: 5px;}
+
+  .mc-action-cluster { transform: none; flex-direction: row;}
+
+  .mc-corner-btn {
+    width: 2.1rem;
+    height: 2.1rem;
+  }
+
+  .mc-turret-btn {
+    width: clamp(48px, 20vh, 64px);
+    height: clamp(48px, 16vh, 64px);
+  }
+
+  .mc-turbo-btn {
+    width: clamp(48px, 20vh, 64px);
+    height: clamp(48px, 16vh, 64px);
+  }
+
+  .mc-action-cluster {
+    gap: clamp(0.4rem, 1.4vh, 0.7rem);
+  }
+
+  .mc-shifter {
+    width: clamp(170px, 34vh, 240px);
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 0.5rem);
+  }
+
+  .dash { gap: 0.3rem; padding: 0.5rem 0.7rem 0.4rem; }
+  .kbd-panel { padding: 0.5rem 0.6rem; gap: 0.3rem; }
+
+  .dash-gauge--speed .dash-gauge-ring {
+    width: clamp(72px, 20vh, 96px);
+    height: clamp(72px, 20vh, 96px);
+  }
+
+  .dash-speed-value { font-size: clamp(1.05rem, 4.5vh, 1.4rem); }
+  .dash-gear-value { font-size: clamp(1rem, 4vh, 1.3rem); }
+  .dash-gear-badge { min-width: 2.4rem; padding: 0.25rem 0.4rem; }
+  .dash-pill { font-size: 0.68rem; }
+  .dash-rpm-value { font-size: 0.62rem; }
+  .dash-engine-pill { font-size: 0.6rem; padding: 0.1rem 0.4rem; }
+
+  #hud #start-engine {
+    margin: 0.35rem 0;
+    padding: 0.4rem 0.7rem;
+    font-size: 0.72rem;
+  }
+
+  .op-panel {
+    top: calc(env(safe-area-inset-top, 0px) + 3.2rem);
+    max-height: 50vh;
+    font-size: 0.72rem;
+  }
+
+  #combat-hud {
+    width: min(150px, 34vw);
+    padding: 0.45rem 0.6rem;
+    font-size: 0.68rem;
+  }
+
+  .combat-row { gap: 0.3rem; margin-bottom: 0.25rem; }
+  .combat-row-label { min-width: 1.8rem; }
+
+  #chat-panel { --chat-log-height: 60px; }
+  #chat-panel.chat-size-normal { --chat-log-height: 90px; }
+  #chat-panel.chat-size-expanded { --chat-log-height: 26vh; }
+}
+
+/* Never let touch driving controls block normal scrolling/menus elsewhere
+   on the page (settings, chat, name entry) — only the controls
+   themselves opt into touch-action: none. */
+.settings-window,
+#chat-log,
+#chat-input,
+.name-entry input {
+  touch-action: manipulation;
+}

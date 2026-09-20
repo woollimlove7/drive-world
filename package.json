@@ -1,0 +1,22 @@
+{
+  "name": "driveworld",
+  "private": true,
+  "version": "0.2.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "server": "node server/server.js",
+    "server:dev": "node --watch server/server.js",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "cannon-es": "0.20.0",
+    "three": "0.174.0",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "vite": "^6.1.0"
+  }
+}
